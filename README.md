@@ -1,3 +1,3 @@
 # HBCD_CBRAIN_PROCESSING
 
-This repo is undergoing rapid development and is not yet functional. Do not use.
+See the following documentation for further details on how HBCD uses CBRAIN to facilitate processing: https://hbcd-cbrain-processing.readthedocs.io/latest/index.html
