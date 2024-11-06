@@ -84,14 +84,14 @@ take the form: ::
 In CBRAIN, these session-specific output folders are
 considered unique "Data Providers". You may see this type
 of information being utilized when you look at the various
-tool descriptions and boutiques descriptors for a given pipeline: ::
-
-   derivatives/ses-<label>
+tool descriptions and boutiques descriptors for a given pipeline.
 
 In HBCD processing the "Data Providers" generally refer to different
 paths within a single S3 Bucket. For example, the BIDS data, and all
 the session-specific derivatives folders are stored within the same
-S3 bucket, with each being represented as a different "Data Provider".
+S3 bucket, with each being represented as a different "Data Provider". ::
+
+   derivatives/ses-<label>
 
 This partitioning of derivatives into session-specific folders is
 done to ensure the integrity of ongoing processing. For end users
@@ -102,8 +102,8 @@ processing. For example, this means that the first two folders seen
 below would be merged to create the third folder: ::
 
    #Note! This is what you will see as a user...
-   derivatives/ses-<label>/<pipeline_name>/sub-<label>/...
-   derivatives/ses-<label>/<pipeline_name>/sub-<label>/...
+   derivatives/ses-V02/<pipeline_name>/sub-<label>/...
+   derivatives/ses-V03/<pipeline_name>/sub-<label>/...
    derivatives/<pipeline_name>/sub-<label>/...
 
 

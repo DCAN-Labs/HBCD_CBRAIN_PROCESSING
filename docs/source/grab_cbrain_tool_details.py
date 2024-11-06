@@ -178,7 +178,7 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
             f.write("The first step of selecting a candidate for processing is determining whether\n")
             f.write("the right files are present. In HBCD processing, pipelines are always run on\n")
             f.write("one session worth of data at a time. With that in mind, we (mostly) query the\n")
-            f.write("contents of a subject's session folder to determine both if processing should occur\n")
+            f.write("contents of a subject's session folder to determine if processing should occur\n")
             f.write("and also which files should be included in processing. For every pipeline there will be\n")
             f.write("at least one requirement group that determines what files are needed for processing to occur. Within\n")
             f.write("a requirement group, there may be criteria that address multiple file (or modality) types, which are known as 'File Groups'.\n")
@@ -188,9 +188,10 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
             f.write("across 'Requirement Groups' must be the same, but which 'File Groups' are defined can be different.\n")
             f.write("If multiple 'Requirement Groups' are present for the current pipeline, there will be multiple tables\n")
             f.write("in this section. Only one 'Requirement Group' needs to be satisfied for processing to occur. If one\n")
-            f.write("requirement group is satisfied, then files from any 'File Group' (across requirement groups) will be included in processing.\n\n")
+            f.write("requirement group is satisfied, then files from all 'File Groups' will be included in processing.\n\n")
 
-            f.write("Beyond the files chosen from this procedure, associated files defined via the table :doc:`here <../associated_files>` will also\n")
+            f.write("Beyond the files that are chosen from this procedure, other associated files\n")
+            f.write("defined via the table :doc:`here <../associated_files>` will also\n")
             f.write("be included in processing.\n\n")
 
             qc_criteria_dict = {}
@@ -233,7 +234,7 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
                 f.write("The requirements listed in this section are used to determine if processing\n")
                 f.write("should occur and to determine which files are best suited for processing. If a 'File\n")
                 f.write("Group' has a table in this section, the file selection procedure will go row-by-row through\n")
-                f.write("the table to evaluate files for processing. The first row is considered the\n")
+                f.write("the table to evaluate files as candidates for processing. The first row is considered the\n")
                 f.write("most important during this procedure, and the last row the least important.\n")
                 f.write("To make a proper comparison, all fields must be defined for all files in a group. In the\n")
                 f.write("case that a field is not defined for at least one file, a backup set ofcriteria may\n")
