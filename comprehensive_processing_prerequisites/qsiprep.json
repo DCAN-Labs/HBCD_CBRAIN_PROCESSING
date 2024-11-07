@@ -22,6 +22,7 @@
                 "num_to_keep" : 1
             },
     
-    "sessions" : {"file_naming" : {"sessions.tsv" : true}}
+    "sessions" : {"file_naming" : {"sessions.tsv" : true}},
+    "scans.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
 }

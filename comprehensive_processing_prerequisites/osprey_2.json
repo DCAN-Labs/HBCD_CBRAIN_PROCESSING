@@ -21,11 +21,12 @@
 
         "HERCULES" : {"file_naming" : {"acq-hercules" : true}},
 
-        "sessions" : {"file_naming" : {"sessions.tsv" : true}},
-
         "localizer" : {"file_naming" : {"mrsLocCor" : false,
                         "Loc" : true,
                         "T2w.nii.gz" : true,
-                        "rec-undistorted" : false}}
+                        "rec-undistorted" : false}},
+
+        "sessions" : {"file_naming" : {"sessions.tsv" : true}},
+        "scans.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
 }

@@ -1884,7 +1884,7 @@ def grab_required_bids_files_inner(session_files, partial_requirements_dict, qc_
     return partial_output_file_list, partial_metadata_dict
 
 def check_all_files_old_enough(metadata_dict, minimum_file_age_days, 
-                               file_patterns_to_ignore = ['sessions.tsv'],
+                               file_patterns_to_ignore = ['sessions.tsv', 'scans.tsv'],
                                verbose = False):
     '''
     If all files in metadata_dict have timestamp of at least minimum_file_age_days

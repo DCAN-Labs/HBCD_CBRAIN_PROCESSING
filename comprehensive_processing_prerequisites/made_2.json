@@ -1,5 +1,6 @@
 {
 
-    "RS" : {"file_naming" : {"acq-eeg" : true, "task-RS" : true}}
+    "RS" : {"file_naming" : {"acq-eeg" : true, "task-RS" : true}},
+    "scans.tsv" : {"file_naming" : {"sessions.tsv" : true}}
     
 }
