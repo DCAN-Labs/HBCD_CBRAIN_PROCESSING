@@ -2413,7 +2413,6 @@ def update_processing(pipeline_name = None,
             session_files = grab_session_specific_file_info(subject_files, temp_ses_name,
                                 session_agnostic_files = session_agnostic_files,
                                 session_level = session_level)
-            print(session_files)
             if len(session_files) == 0:
                 print('   No files found for subject/session combo')
                 continue
