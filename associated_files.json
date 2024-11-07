@@ -6,5 +6,6 @@
     ".nii.gz" : [".json"],
     "_sessions.tsv" : ["_sessions.json"],
     "motion.tsv" : ["motion.json", "channels.json", "channels.tsv"],
-    "sessions.tsv" : ["sessions.json"]
+    "sessions.tsv" : ["sessions.json"],
+    "scans.tsv" : ["scans.json"]
 }
