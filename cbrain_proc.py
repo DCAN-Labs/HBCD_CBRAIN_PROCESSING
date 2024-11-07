@@ -1739,6 +1739,8 @@ def grab_required_bids_files_inner(session_files, partial_requirements_dict, qc_
     #is in the partial_requirements_dict. If there are more than
     #one QC Criteria (i.e. there are backup QC criteria), then 
     #the qc_index will say which one is currently being referenced
+
+    print(session_files)
     if verbose:
         print('Current QC Index: {}'.format(qc_index))
     if 'qc_criteria' in partial_requirements_dict:
