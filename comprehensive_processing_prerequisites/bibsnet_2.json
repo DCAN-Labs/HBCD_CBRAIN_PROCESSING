@@ -18,6 +18,6 @@
             },
 
     "sessions" : {"file_naming" : {"sessions.tsv" : true}},
-    "scans.tsv" : {"file_naming" : {"sessions.tsv" : true}}
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
 
 }
