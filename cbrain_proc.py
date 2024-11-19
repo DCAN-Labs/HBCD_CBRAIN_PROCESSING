@@ -50,7 +50,7 @@ def find_cbrain_subjects(cbrain_api_token, data_provider_id = 710): #For the rea
     files_request = {
         'cbrain_api_token': cbrain_api_token,
         'page': 1,
-        'per_page': 1000
+        'per_page': 999
     }
 
     while True:
@@ -229,7 +229,7 @@ def find_cbrain_entities(cbrain_api_token, entity_type):
 
     base_url = 'https://portal.cbrain.mcgill.ca'
     tasks = []
-    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 1000}
+    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
 
     while True:
         tasks_response = requests.get(
@@ -906,7 +906,7 @@ def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
     '''
     base_url = 'https://portal.cbrain.mcgill.ca'
     tasks = []
-    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 1000}
+    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
 
     while True:
         tasks_response = requests.get(
