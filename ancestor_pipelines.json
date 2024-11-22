@@ -9,6 +9,6 @@
     "qmri_postproc" : ["bibsnet", "bibsnet_work"],
     "qsiprep_qc" : ["qsiprep"],
     "bibsnet_work" : [],
-    "bibsnet" : ["bibsnet_work"],
+    "bibsnet" : [],
     "axivity_postproc" : []
 }
