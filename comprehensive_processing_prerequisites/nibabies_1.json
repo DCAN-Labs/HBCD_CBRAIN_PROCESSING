@@ -10,7 +10,7 @@
                                 {"QC" : [1, "equals"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}],
-                                [{"HBCD_compliant" : ["Yes", "equals"]},
+                                [{"QC" : [1, "equals"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}]],
             "num_to_keep" : 1
@@ -26,7 +26,7 @@
                                         {"QU_motion" : [2, "less_than"]},
                                         {"aqc_motion" : [10000, "less_than"]},
                                         {"brain_SNR" : [-1000, "greater_than"]}],
-                                        [{"HBCD_compliant" : ["Yes", "equals"]},
+                                        [{"QC" : [1, "equals"]},
                                         {"aqc_motion" : [10000, "less_than"]},
                                         {"brain_SNR" : [-1000, "greater_than"]}]],
     
