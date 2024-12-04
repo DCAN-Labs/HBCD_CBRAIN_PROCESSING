@@ -12,11 +12,11 @@
                 "acq-mrsLoc" : false,
                 "_QALAS.nii.gz" : false},
     
-                "qc_criteria" : [[{"QC" : [1, "equals"]},
+                "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
                                     {"QU_motion" : [2, "less_than"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}],
-                                 [{"QC" : [1, "equals"]},
+                                 [{"HBCD_compliant" : ["Yes", "equals"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}]],
                 "num_to_keep" : 1
