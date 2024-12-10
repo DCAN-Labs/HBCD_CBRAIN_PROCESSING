@@ -3,5 +3,6 @@
     "bibsnet" : "session_label",
     "axivity_postproc" : "session_id",
     "made" : "SessionLabel",
-    "qsiprep" : "session_id"
+    "qsiprep" : "session_id",
+    "qsirecon" : "session_id"
 }

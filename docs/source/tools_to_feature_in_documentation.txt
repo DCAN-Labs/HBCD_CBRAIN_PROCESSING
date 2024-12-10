@@ -7,4 +7,5 @@ nibabies
 osprey
 qmri_postproc
 qsiprep
+qsirecon
 xcp_d
