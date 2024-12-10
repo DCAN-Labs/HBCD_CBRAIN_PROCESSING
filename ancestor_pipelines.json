@@ -1,6 +1,7 @@
 {
     "mriqc" : [],
     "qsiprep" : [],
+    "qsirecon" : ["qsiprep"],
     "hbcd_qc" : [],
     "nibabies" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
