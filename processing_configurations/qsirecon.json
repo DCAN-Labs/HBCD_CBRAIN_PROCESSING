@@ -2,6 +2,7 @@
     "output_dir_name": "qwerty",
     "output_resolution": "1.7",
     "recon_spec" : "hbcd_scalar_maps",
+    "report_output_level" : "session",
     "infant": true,
     "derivatives_prefix": "",
     "verbose": true
