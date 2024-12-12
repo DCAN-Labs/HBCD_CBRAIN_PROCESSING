@@ -10,5 +10,5 @@
     "qsiprep_qc" : ["qsiprep"],
     "bibsnet_work" : [],
     "bibsnet" : ["bibsnet_work"],
-    "axivity_postproc" : []
+    "hbcd_motion" : []
 }
