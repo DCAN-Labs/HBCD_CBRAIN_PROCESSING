@@ -3,7 +3,7 @@
     "qsiprep" : [],
     "qsirecon" : ["qsiprep"],
     "hbcd_qc" : [],
-    "nibabies" : [],
+    "nibabies" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
     "made" : [],
     "osprey" : ["bibsnet"],
