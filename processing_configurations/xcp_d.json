@@ -3,7 +3,7 @@
     "derivatives_prefix": "",
     "input_type": "nibabies",
     "despike": "y",
-    "warp_surfaces": "y",
+    "warp_surfaces": "n",
     "fd_thresh": "0.3",
     "head_radius": "auto",
     "combineruns": "y",
