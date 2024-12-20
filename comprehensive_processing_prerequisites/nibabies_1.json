@@ -41,6 +41,8 @@
                 "dir-AP" : true}},
     
         "PA_FMAP" : {"file_naming" : {"epi.nii.gz" : true, 
-                "dir-PA" : true}}
+                "dir-PA" : true}},
+
+        "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
         
     }
