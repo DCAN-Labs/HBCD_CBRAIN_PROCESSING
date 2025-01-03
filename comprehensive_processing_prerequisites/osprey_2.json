@@ -26,6 +26,7 @@
                         "T2w.nii.gz" : true,
                         "rec-undistorted" : false}},
 
-        "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
+        "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+        "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
 }
