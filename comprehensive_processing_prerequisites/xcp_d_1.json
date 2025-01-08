@@ -6,11 +6,11 @@
         "acq-mrsLoc" : false,
         "_QALAS.nii.gz" : false},
 
-        "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+        "qc_criteria" : [[{"QC" : [1, "equals"]},
                         {"QU_motion" : [2, "less_than"]},
                         {"aqc_motion" : [10000, "less_than"]},
                         {"brain_SNR" : [-1000, "greater_than"]}],
-                        [{"HBCD_compliant" : ["Yes", "equals"]},
+                        [{"QC" : [1, "equals"]},
                         {"aqc_motion" : [10000, "less_than"]},
                         {"brain_SNR" : [-1000, "greater_than"]}]],
         "num_to_keep" : 1
@@ -22,11 +22,11 @@
             "acq-mrsLoc" : false,
             "_QALAS.nii.gz" : false},
 
-            "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+            "qc_criteria" : [[{"QC" : [1, "equals"]},
                                 {"QU_motion" : [2, "less_than"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}],
-                                [{"HBCD_compliant" : ["Yes", "equals"]},
+                                [{"QC" : [1, "equals"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}]],
 
@@ -43,7 +43,7 @@
     "PA_FMAP" : {"file_naming" : {"epi.nii.gz" : true, 
             "dir-PA" : true}},
 
-    "sessions" : {"file_naming" : {"sessions.tsv" : true}},
-    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+    "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
 }

@@ -2,5 +2,14 @@
     "bibsnet_work" : "session_label",
     "bibsnet" : "session_label",
     "hbcd_motion" : "session_id",
-    "made" : "SessionLabel"
+    "hbcd_qc" : "session_id",
+    "made" : "SessionLabel",
+    "mriqc" : "session_id",
+    "osprey" : "SessionLabel",
+    "nibabies" : "session_id",
+    "qmri_postproc" : "SessionLabel",
+    "qsiprep" : "session_id",
+    "qsiprep_qc" : "SessionLabel",
+    "qsirecon" : "session_id",
+    "xcp_d" : "session_id"
 }

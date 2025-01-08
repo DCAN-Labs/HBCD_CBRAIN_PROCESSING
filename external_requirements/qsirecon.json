@@ -1,3 +1,6 @@
 {
-    "subject_dir" : "BidsSubject"
+    "subject_dir" : "BidsSubject",
+    "qsiprep_subject_dir" : "QsiprepOutput",
+    "qsiprep_json": "5460266",
+    "fs_license_file": "4323067"
 }

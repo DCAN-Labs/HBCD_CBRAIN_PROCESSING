@@ -7,7 +7,7 @@
             "_QALAS.nii.gz" : false}
             },
 
-    "sessions" : {"file_naming" : {"sessions.tsv" : true}},
-    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+    "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
 }

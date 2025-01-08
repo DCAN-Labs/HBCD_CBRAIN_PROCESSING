@@ -1,6 +1,7 @@
 {
     "output_dir_name": "qwerty",
     "output_resolution": "1.7",
+    "subject_anat_reference": "sessionwise",
     "AnatModality": "T2w",
     "infant": true,
     "unringing_method": "rpg",
@@ -8,6 +9,5 @@
     "B1_BIAS_CORRECT": "none",
     "PEPOLAR_METHOD": "TOPUP+DRBUDDI",
     "derivatives_prefix": "",
-    "recon_spec": "hbcd_scalar_maps",
     "verbose": true
 }

@@ -1,15 +1,15 @@
 {
     "mriqc" : 3791,
-    "qsiprep" : 6992,
+    "qsiprep" : 7685,
+    "qsirecon" : 7688,
     "hbcd_qc" : 6878,
-    "nibabies" : 7495,
-    "xcp_d" : 7288,
+    "nibabies" : 7763,
+    "xcp_d" : 7682,
     "made" : 7351,
     "osprey" : 7522,
     "qmri_postproc" : 7342,
     "qsiprep_qc" : 6998,
-    "bibsnet_work" : 7393,
-    "bibsnet" : 7396,
+    "bibsnet" : 7631,
     "symri_qc" : 6686,
     "hbcd_motion" : 7604
 }
