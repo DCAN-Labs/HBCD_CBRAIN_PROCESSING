@@ -3,19 +3,20 @@ The .cbrain folder in Processing Outputs
 
 This page describes the .cbrain folder, which is found in many processing outputs
 and contains detailed information about the processing that was performed.
-For example, for a given set of pipeline outputs there is the following structure: ::
+For example, for a given set of pipeline outputs there is generally the following structure: ::
     
     pipeline_name/
     ├── sub-<label>/
+    |   │   ├── ses-<label>/
     │   ├── .cbrain/
-    │   │   ├── boutiques_descriptor.json
-    │   │   ├── boutiques_invoke.json
-    │   │   ├── cbrain_params.json
-    │   │   ├── job_script.sh
-    │   │   ├── runtime_info.properties
-    │   │   ├── stderr.log
-    │   │   ├── stdout.log
-    │   ├── ... (other processing outputs)
+    │   │   │   ├── boutiques_descriptor.json
+    │   │   │   ├── boutiques_invoke.json
+    │   │   │   ├── cbrain_params.json
+    │   │   │   ├── job_script.sh
+    │   │   │   ├── runtime_info.properties
+    │   │   │   ├── stderr.log
+    │   │   │   ├── stdout.log
+    │   │   ├── ... (other processing outputs)
 
 Within the files above, users are provided with the following information:
 
@@ -28,3 +29,7 @@ Within the files above, users are provided with the following information:
   cluster.
 - The runtime_info.properties file will contain information about the processing script that was run.
 - The stderr.log and stdout.log files will contain the standard error and standard output from the processing job.
+
+.. note::
+    If a pipeline output does not contain a ses-<label> folder, the .cbrain folder
+    will be placed under the subject directory.
