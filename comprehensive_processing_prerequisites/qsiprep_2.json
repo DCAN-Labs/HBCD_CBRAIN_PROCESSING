@@ -1,10 +1,12 @@
 {
 
     "DWI_AP" : {"file_naming" : {"dwi.nii.gz" : true,
-                "dir-AP" : true}},
+                "dir-AP" : true},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
 
     "DWI_PA" : {"file_naming" : {"dwi.nii.gz" : true,
-                "dir-PA" : true}},
+                "dir-PA" : true},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
 
     "T1" : {"file_naming" : {"T1w.nii.gz" : true,
                 "rec-undistorted" : false,
@@ -12,11 +14,11 @@
                 "acq-mrsLoc" : false,
                 "_QALAS.nii.gz" : false},
     
-                "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+                "qc_criteria" : [[{"QC" : [1, "equals"]},
                                     {"QU_motion" : [2, "less_than"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}],
-                                 [{"HBCD_compliant" : ["Yes", "equals"]},
+                                 [{"QC" : [1, "equals"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}]],
                 "num_to_keep" : 1
@@ -28,11 +30,11 @@
                 "acq-mrsLoc" : false,
                 "_QALAS.nii.gz" : false},
     
-                "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+                "qc_criteria" : [[{"QC" : [1, "equals"]},
                                     {"QU_motion" : [2, "less_than"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}],
-                                 [{"HBCD_compliant" : ["Yes", "equals"]},
+                                 [{"QC" : [1, "equals"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}]],
                 "num_to_keep" : 1

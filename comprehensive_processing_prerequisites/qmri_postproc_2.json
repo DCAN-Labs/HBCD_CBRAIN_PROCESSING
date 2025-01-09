@@ -16,6 +16,13 @@
             "num_to_keep" : 1
             },
 
+    "QALAS" : {"file_naming" : {"QALAS.nii.gz" : true},
+
+            "qc_criteria" : [[{"QC" : [1, "equals"]},
+                                {"QU_motion" : [2, "less_than"]}]],
+            "num_to_keep" : 1
+            },
+
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
     "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 
