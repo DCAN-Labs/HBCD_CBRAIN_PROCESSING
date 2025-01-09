@@ -6,7 +6,7 @@
             "acq-mrsLoc" : false,
             "_QALAS.nii.gz" : false},
     
-            "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+            "qc_criteria" : [[{"QC" : [1, "equals"]},
                                 {"QU_motion" : [2, "less_than"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}],
@@ -22,11 +22,11 @@
             "acq-mrsLoc" : false,
             "_QALAS.nii.gz" : false},
 
-            "qc_criteria" : [[{"HBCD_compliant" : ["Yes", "equals"]},
+            "qc_criteria" : [[{"QC" : [1, "equals"]},
                                 {"QU_motion" : [2, "less_than"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}],
-                                [{"HBCD_compliant" : ["Yes", "equals"]},
+                                [{"QC" : [1, "equals"]},
                                 {"aqc_motion" : [10000, "less_than"]},
                                 {"brain_SNR" : [-1000, "greater_than"]}]],
 
@@ -35,13 +35,16 @@
 
         "FMRI" : {"file_naming" : {"bold.nii.gz" : true,
                 "rec-undistorted" : false, 
-                "rec-biascorrected" : false}},
+                "rec-biascorrected" : false},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
 
         "AP_FMAP" : {"file_naming" : {"epi.nii.gz" : true, 
-                "dir-AP" : true}},
+                "dir-AP" : true},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
     
         "PA_FMAP" : {"file_naming" : {"epi.nii.gz" : true, 
-                "dir-PA" : true}},
+                "dir-PA" : true},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
 
         "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
         "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}        
