@@ -1,11 +1,21 @@
 {
 
     "T2" : {"file_naming" : {"T2w.nii.gz" : true,
-            "rec-undistorted" : false,
-            "acq-svslocalizer" : false,
-            "acq-mrsLoc" : false,
-            "_QALAS.nii.gz" : false}
-            },
+                "rec-undistorted" : false,
+                "acq-svslocalizer" : false,
+                "acq-mrsLoc" : false,
+                "_QALAS.nii.gz" : false},
+    
+                "qc_criteria" : [[{"QC" : [1, "equals"]},
+                                    {"QU_motion" : [2, "less_than"]},
+                                    {"aqc_motion" : [10000, "less_than"]},
+                                    {"brain_SNR" : [-1000, "greater_than"]}],
+                                 [{"QC" : [1, "equals"]},
+                                    {"aqc_motion" : [10000, "less_than"]},
+                                    {"brain_SNR" : [-1000, "greater_than"]}]],
+    
+                "num_to_keep" : 1
+                },
 
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
     "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}

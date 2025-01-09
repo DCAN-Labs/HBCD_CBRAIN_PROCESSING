@@ -1,8 +1,9 @@
 {
     
     "FMRI" : {"file_naming" : {"bold.nii.gz" : true,
-            "rec-undistorted" : false, 
-            "rec-biascorrected" : false}},
+                "rec-undistorted" : false, 
+                "rec-biascorrected" : false},
+                "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
 
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
     "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
