@@ -17,5 +17,6 @@
     "mode" : "hbcd",
     "dummy_scans" : "4",
     "motion_filter_type" : "none",
+    "create_matrices" : "all",
     "linc_qc" : "y"
 }
