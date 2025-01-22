@@ -1,6 +1,6 @@
 {
 
-    "QALAS" : {"file_naming" : {"QALAS.nii.gz" : true},
+    "QALAS" : {"file_naming" : {"inv-4_QALAS.nii.gz" : true},
 
             "qc_criteria" : [[{"QC" : [1, "equals"]},
                                 {"QU_motion" : [2, "less_than"]},

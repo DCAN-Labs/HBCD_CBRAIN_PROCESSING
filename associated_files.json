@@ -7,5 +7,11 @@
     "_sessions.tsv" : ["_sessions.json"],
     "motion.tsv" : ["motion.json", "channels.json", "channels.tsv"],
     "sessions.tsv" : ["sessions.json"],
-    "scans.tsv" : ["scans.json"]
+    "scans.tsv" : ["scans.json"],
+    "inv-4_QALAS.nii.gz" : ["inv-3_QALAS.nii.gz",
+                            "inv-3_QALAS.json",
+                            "inv-2_QALAS.nii.gz",
+                            "inv-2_QALAS.json",
+                            "inv-1_QALAS.nii.gz",
+                            "inv-1_QALAS.json"]
 }
