@@ -13,5 +13,7 @@
                             "inv-2_QALAS.nii.gz",
                             "inv-2_QALAS.json",
                             "inv-1_QALAS.nii.gz",
-                            "inv-1_QALAS.json"]
+                            "inv-1_QALAS.json",
+                            "inv-0_QALAS.nii.gz",
+                            "inv-0_QALAS.json"]
 }
