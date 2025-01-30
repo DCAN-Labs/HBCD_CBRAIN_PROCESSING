@@ -1,0 +1,24 @@
+{
+
+    "QALAS" : {"file_naming" : {"inv-4_QALAS.nii.gz" : true},
+
+            "qc_criteria" : [[{"QC" : [1, "equals"]},
+                                {"QU_motion" : [2, "less_than"]},
+                                {"aqc_motion" : [10000, "less_than"]},
+                                {"brain_SNR" : [-1000, "greater_than"]}],
+                            [{"QC" : [1, "equals"]},
+                                {"aqc_motion" : [10000, "less_than"]},
+                                {"brain_SNR" : [-1000, "greater_than"]}]],
+            "num_to_keep" : 1
+            },
+
+    "TB1" : {"file_naming" : {"TB1" : true,
+                              ".nii.gz" : true}
+        },
+
+
+
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+    "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
+
+}
