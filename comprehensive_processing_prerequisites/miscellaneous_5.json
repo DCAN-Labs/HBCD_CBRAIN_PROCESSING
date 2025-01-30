@@ -11,6 +11,13 @@
                                 {"brain_SNR" : [-1000, "greater_than"]}]],
             "num_to_keep" : 1
             },
+
+    "TB1" : {"file_naming" : {"TB1" : true,
+                              ".nii.gz" : true}
+        },
+
+
+
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
     "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
 

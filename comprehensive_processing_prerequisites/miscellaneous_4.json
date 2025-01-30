@@ -1,0 +1,7 @@
+{
+
+    "FACE" : {"file_naming" : {"acq-ecg" : true, "task-FACE" : true}},
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+    "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
+    
+}
