@@ -12,7 +12,10 @@ Imaging Data Structure  <https://bids-specification.readthedocs.io/en/stable/>`_
 used to process HBCD data are also designed to be `BIDS-Apps <https://bids-apps.neuroimaging.io/>`_.
 
 In this section, we describe some of the key elements of HBCD BIDS organization
-as it pertains to processing. At a high level, the HBCD BIDS structure will appear
+as it pertains to processing. These descriptions focus on the structure of the
+internal BIDS dataset which is used to facilitate HBCD processing. During the
+release, some of these folders are reorganized to make the dataset easier for
+end users to interact with. At a high level, the internal HBCD BIDS structure appears
 as follows: ::
 
     assembly_bids/
@@ -54,7 +57,7 @@ age of the participant at the first in-person data collection. The "age" measure
 is provided in years with three decimal places, based on a birthdate measure
 that is jittered up to 7 days.
 
-When processing begins, scripts first examine the S3 structure where the
+When internal processing begins, our scripts first examine the S3 structure where the
 BIDS data is stored to identify the available files for a given subject.
 Each pipeline has specific requirements based on the type of processing
 being done (e.g., QSIPREP requires diffusion data, while MADE needs EEG data).
@@ -95,16 +98,17 @@ S3 bucket, with each being represented as a different "Data Provider". ::
 
 This partitioning of derivatives into session-specific folders is
 done to ensure the integrity of ongoing processing. For end users
-who are instead interacting with a one-time data dump of the HBCD
-data, the outputs will be re-organized into a single derivatives
+who are instead interacting with HBCD data via the public data release,
+the outputs will be re-organized into a single derivatives
 structure that contains the outputs for all sessions worth of
 processing. For example, this means that the first two folders seen
 below would be merged to create the third folder: ::
 
-   #Note! This is what you will see as a user...
+   #Note! This is what is seen internally.
    derivatives/ses-V02/<pipeline_name>/sub-<label>/...
    derivatives/ses-V03/<pipeline_name>/sub-<label>/...
-   derivatives/<pipeline_name>/sub-<label>/...
+   #Note! This is what will be seen by end users
+   bids/derivatives/<pipeline_name>/sub-<label>/...
 
 
 

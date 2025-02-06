@@ -12,7 +12,7 @@ application can be interacted with. For example, this includes descriptions
 of the expected inputs and outputs for a pipeline, and the arguments
 that can be used to configure processing. 
 
-Boutiques descriptors are how CBRAIN can create a consistent interface
+Boutiques descriptors are how CBRAIN creates a consistent interface
 for interacting with a wide variety of pipelines. On the CBRAIN web portal,
 the options for processing are automatically configured in a convenient way
 for users via utilities like drop-down menus, text fields, and check-boxes.
@@ -72,7 +72,7 @@ text may look as follows: ::
 
     "command-line": "mkdir -p work out; pipeline_name [Arg1] [Arg2]"
 
-In the above example, the directories "work" and "out" would be first created. Following
+In the above example, the directories "work" and "out" would be created first. Following
 this, the hypothetical pipeline would be run by calling "pipeline_name" which refers to
 a command that exists in the container. Most containers have commands on the PATH that
 can be directly called in this way. Then following "pipeline_name" are [Arg1] and [Arg2]
