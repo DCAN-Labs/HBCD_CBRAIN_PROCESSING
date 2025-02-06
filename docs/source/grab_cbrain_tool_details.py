@@ -238,11 +238,11 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
                 f.write("to look at some QC criteria to determine whether a file should be included in processing. This section\n")
                 f.write("defines the QC criteria that is used to evaluate specific images. These QC criteria always operate\n")
                 f.write("on one file group at a time. If a file group uses QC criteria to select images, at least one table will be\n")
-                f.write("displayed below. Depending on the context, these criteria will be used to exclude certain images from processing\n")
+                f.write("displayed below. Depending on the context, these criteria will be used to exclude certain images from processing,\n")
                 f.write("to find the best available image(s) within a specific category, or to exclude a session from processing.\n")
                 f.write("If sorting is the goal, the first row will be considered the most important criteria. In certain cases, not all\n")
-                f.write("images will have ratings for a specific QC field. In this case, a backup table (which will be displayed after)\n")
-                f.write("the first table if available, will be used for that file group.\n\n")
+                f.write("images will have ratings for a specific QC field. In this case, a backup table (which will be displayed after\n")
+                f.write("the first table if available), will be used for that file group.\n\n")
                 for temp_key in qc_criteria_dict.keys():
                     if 'qc_criteria' in qc_criteria_dict[temp_key].keys():
                         f.write(f"File Group: {temp_key}\n")
