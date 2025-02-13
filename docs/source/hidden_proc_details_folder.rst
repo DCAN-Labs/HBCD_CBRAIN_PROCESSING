@@ -8,6 +8,22 @@ For example, for a given set of pipeline outputs there is generally the followin
     pipeline_name/
     ├── sub-<label>/
     |   │   ├── ses-<label>/
+    |   │   ├── .cbrain/
+    |   │   │   │   ├── boutiques_descriptor.json
+    |   │   │   │   ├── boutiques_invoke.json
+    |   │   │   │   ├── cbrain_params.json
+    |   │   │   │   ├── job_script.sh
+    |   │   │   │   ├── runtime_info.properties
+    |   │   │   │   ├── stderr.log
+    |   │   │   │   ├── stdout.log
+    │   │   ├── ... (other processing outputs)
+
+
+Or alternatively: ::
+
+    pipeline_name/
+    ├── sub-<label>/
+    |   │   ├── ses-<label>/
     │   ├── .cbrain/
     │   │   │   ├── boutiques_descriptor.json
     │   │   │   ├── boutiques_invoke.json
@@ -32,4 +48,4 @@ Within the files above, users are provided with the following information:
 
 .. note::
     If a pipeline output does not contain a ses-<label> folder, the .cbrain folder
-    will be placed under the subject directory.
+    may be placed under the subject directory.
