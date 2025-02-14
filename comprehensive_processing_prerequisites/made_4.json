@@ -1,6 +1,0 @@
-{
-
-    "FACE" : {"file_naming" : {"acq-eeg" : true, "task-FACE" : true}},
-    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
-    
-}

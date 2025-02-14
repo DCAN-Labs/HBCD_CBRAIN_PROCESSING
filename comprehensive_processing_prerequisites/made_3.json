@@ -1,6 +1,0 @@
-{
-
-    "MMN" : {"file_naming" : {"acq-eeg" : true, "task-MMN" : true}},
-    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
-    
-}

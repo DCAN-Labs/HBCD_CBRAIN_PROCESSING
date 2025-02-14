@@ -1,6 +1,0 @@
-{
-
-    "VEP" : {"file_naming" : {"acq-eeg" : true, "task-VEP" : true}},
-    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
-    
-}
