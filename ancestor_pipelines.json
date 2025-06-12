@@ -9,7 +9,6 @@
     "osprey" : ["bibsnet"],
     "qmri_postproc" : ["bibsnet"],
     "qsiprep_qc" : ["qsiprep"],
-    "bibsnet_work" : [],
-    "bibsnet" : ["bibsnet_work"],
+    "bibsnet" : [],
     "hbcd_motion" : []
 }
