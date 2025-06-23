@@ -1,0 +1,32 @@
+{
+
+        "T2" : {"file_naming" : {"T2w.nii.gz" : true,
+                        "rec-undistorted" : false,
+                        "acq-svslocalizer" : false,
+                        "acq-mrsLoc" : false,
+                        "_QALAS.nii.gz" : false},
+
+                        "qc_criteria" : [[{"QC" : [-1, "greater_than"]},
+                                        {"QU_motion" : [5, "less_than"]},
+                                        {"aqc_motion" : [10000, "less_than"]},
+                                        {"brain_SNR" : [-1000, "greater_than"]}],
+                                        [{"QC" : [-1, "greater_than"]},
+                                        {"aqc_motion" : [10000, "less_than"]},
+                                        {"brain_SNR" : [-1000, "greater_than"]}]],
+
+                "num_to_keep" : 1
+                },
+
+        "shortTE" : {"file_naming" : {"acq-shortTE" : true}},
+
+        "HERCULES" : {"file_naming" : {"acq-hercules" : true}},
+
+        "localizer" : {"file_naming" : {"mrsLocCor" : false,
+                        "Loc" : true,
+                        "T2w.nii.gz" : true,
+                        "rec-undistorted" : false}},
+
+        "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+        "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
+
+}
