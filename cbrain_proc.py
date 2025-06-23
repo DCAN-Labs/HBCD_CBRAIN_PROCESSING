@@ -397,17 +397,19 @@ def upload_processing_config_log(file_name, bucket = 'hbcd-cbrain-test', prefix 
                     host_base = 'https://' + host_base
         
     #Create s3 client
+    cfg = Config(
+        # Disable the new chunked-with-trailer uploads except when S3
+        # explicitly *requires* them (rare operations such as DeleteObjects).
+        request_checksum_calculation="when_required",
+        response_checksum_validation="when_required",
+    )
+
     client = boto3.client(
         's3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
         endpoint_url =host_base,
-        config=Config(
-            s3={
-                "request_checksum_calculation": "when_required",
-                "response_checksum_validation": "when_required",
-            }
-        )
+        config=cfg
     )
 
     del access_key, secret_key, host_base
