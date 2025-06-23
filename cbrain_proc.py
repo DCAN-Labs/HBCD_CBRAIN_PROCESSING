@@ -3,6 +3,7 @@ from datetime import date
 import numpy as np
 import boto3
 from botocore.exceptions import ClientError
+from botocore.config import Config
 import pathlib
 from pathlib import Path
 import glob
@@ -400,7 +401,13 @@ def upload_processing_config_log(file_name, bucket = 'hbcd-cbrain-test', prefix 
         's3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
-        endpoint_url =host_base
+        endpoint_url =host_base,
+        config=Config(
+            s3={
+                "request_checksum_calculation": "when_required",
+                "response_checksum_validation": "when_required",
+            }
+        )
     )
 
     del access_key, secret_key, host_base
