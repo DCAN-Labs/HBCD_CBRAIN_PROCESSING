@@ -39,7 +39,7 @@
                 "_QALAS.nii.gz" : false},
     
                 "qc_criteria" : [[{"QC" : [1, "equals"]},
-                                    {"QU_motion" : [2, "less_than"]},
+                                    {"QU_motion" : [2.01, "less_than"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}],
                                  [{"QC" : [1, "equals"]},
@@ -55,7 +55,7 @@
                 "_QALAS.nii.gz" : false},
     
                 "qc_criteria" : [[{"QC" : [1, "equals"]},
-                                    {"QU_motion" : [2, "less_than"]},
+                                    {"QU_motion" : [2.01, "less_than"]},
                                     {"aqc_motion" : [10000, "less_than"]},
                                     {"brain_SNR" : [-1000, "greater_than"]}],
                                  [{"QC" : [1, "equals"]},
