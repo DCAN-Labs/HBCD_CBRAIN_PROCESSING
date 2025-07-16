@@ -6,7 +6,7 @@
     "nibabies" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
     "made" : [],
-    "mrs_qc" : ["bibsnet"],
+    "mrsqc" : [],
     "osprey" : ["bibsnet"],
     "qmri_postproc" : ["bibsnet"],
     "qsiprep_qc" : ["qsiprep"],
