@@ -1411,7 +1411,7 @@ def check_bids_requirements_v2_inner(session_files, partial_requirements_dict, q
                     if temp_ses_agnostic in temp_file:
                         is_ses_agnostic = 1
                 if is_ses_agnostic == 0:
-                    print('   Exiting processing attempt: No QC info for {}'.format(temp_file))
+                    print('    Exiting processing attempt: Relevant file is not mentioned in scans.tsv: {}'.format(temp_file))
                     return None, 'No QC'
 
 
@@ -1786,7 +1786,7 @@ def grab_required_bids_files_inner(session_files, partial_requirements_dict, qc_
                     if temp_ses_agnostic in temp_file:
                         is_ses_agnostic = 1
                 if is_ses_agnostic == 0:
-                    print('   Exiting processing attempt: No QC info for {}'.format(temp_file))
+                    print('    FYI: Relevant file is not mentioned in scans.tsv: {}'.format(temp_file))
                     return None, None
 
 
