@@ -5,6 +5,7 @@
     "made" : "SessionLabel",
     "mriqc" : "session_id",
     "osprey" : "SessionLabel",
+    "mrsqc" : "SessionLabel",
     "nibabies" : "session_id",
     "qmri_postproc" : "SessionLabel",
     "qsiprep" : "session_id",
