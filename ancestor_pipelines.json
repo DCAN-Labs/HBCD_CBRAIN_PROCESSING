@@ -11,5 +11,6 @@
     "qmri_postproc" : ["bibsnet"],
     "qsiprep_qc" : ["qsiprep"],
     "bibsnet" : [],
-    "hbcd_motion" : []
+    "hbcd_motion" : [],
+    "bme_x" : []
 }
