@@ -1,5 +1,5 @@
 {
-    "output_dir": "qwerty",
+    "output_dir": "output",
     "derivatives_prefix": "",
     "input_type": "nibabies",
     "despike": "y",

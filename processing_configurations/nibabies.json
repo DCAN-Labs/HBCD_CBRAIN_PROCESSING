@@ -1,5 +1,5 @@
 {
-    "output_dir_name": "qwerty",
+    "output_dir_name": "output",
     "derivatives_prefix": "",
     "surface_recon_method": "mcribs",
     "project_goodvoxels": "true",

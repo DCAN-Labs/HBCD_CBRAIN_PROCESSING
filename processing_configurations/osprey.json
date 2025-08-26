@@ -1,6 +1,6 @@
 {
     "LocalizerRegistration": true,
-    "OSPREYOutputDirectoryName": "qwerty",
+    "OSPREYOutputDirectoryName": "output",
     "LocSearchTerm": "*mrsLocAx*.nii*",
     "derivatives_prefix": "",
     "TermsNotAllowedInAnat" : ["mrs", "Loc"],

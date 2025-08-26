@@ -1,5 +1,5 @@
 {
-    "postproc_output_dir": "qwerty",
+    "postproc_output_dir": "output",
     "stop_on_error": true,
     "derivatives_prefix": ""
 }

@@ -1,5 +1,5 @@
 {
-    "output_dir_name": "qwerty",
+    "output_dir_name": "output",
     "output_resolution": "1.7",
     "subject_anat_reference": "sessionwise",
     "AnatModality": "T2w",
