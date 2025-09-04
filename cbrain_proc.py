@@ -521,14 +521,28 @@ def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids
     #Iterate through bucket to find potential subjects
     file_to_download = os.path.join(bids_prefix, subject, session, '{}_{}_scans.tsv'.format(subject,session))
     downloaded_file = os.path.join(output_folder, file_to_download.split('/')[-1])
+
+    file_exists = s3_file_exists(client, bucket, file_to_download)
+    if file_exists == False:
+        print('    Warning: expected to find scans.tsv file at s3://{}/{} but it does not exist'.format(bucket, file_to_download))
+        return None
+
     if verbose:
         print('    Downloading scans.tsv file from s3://{}/{}'.format(bucket, file_to_download))
-    try:
-        client.download_file(bucket, file_to_download, downloaded_file)
-    except:
-        return None
-            
+        
+    client.download_file(bucket, file_to_download, downloaded_file)
     return downloaded_file
+
+def s3_file_exists(s3, bucket: str, key: str) -> bool:
+    try:
+        s3.head_object(Bucket=bucket, Key=key)
+        return True
+    except botocore.exceptions.ClientError as e:
+        # A 404 means the object does not exist.
+        if e.response["Error"]["Code"] in ("404", "NoSuchKey", "NotFound"):
+            return False
+        # Any other error should be raised (permissions, etc.)
+        raise
 
 def create_boto3_client(s3_config = None):
     '''Utility to create a boto3 client
