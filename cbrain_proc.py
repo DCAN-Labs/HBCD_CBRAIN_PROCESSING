@@ -483,7 +483,7 @@ def is_qc_info_required(requirement_dictionary):
     return False
 
 
-def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids_prefix = 'assembly_bids', bucket = 'hbcd-pilot', client = None):
+def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids_prefix = 'assembly_bids', bucket = 'hbcd-pilot', client = None, verbose = False):
     '''Download scans.tsv file for a given subject/session
     
     Parameters
@@ -521,6 +521,8 @@ def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids
     #Iterate through bucket to find potential subjects
     file_to_download = os.path.join(bids_prefix, subject, session, '{}_{}_scans.tsv'.format(subject,session))
     downloaded_file = os.path.join(output_folder, file_to_download.split('/')[-1])
+    if verbose:
+        print('    Downloading scans.tsv file from s3://{}/{}'.format(bucket, file_to_download))
     try:
         client.download_file(bucket, file_to_download, downloaded_file)
     except:
@@ -2334,6 +2336,8 @@ def update_processing(pipeline_name = None,
             #This should always be something like 'ses-V01', 'ses-V02', etc.
             temp_ses_name = session_dps_dict[temp_ses]['prefix'].split('/')[-1]
 
+            
+
             #Before gathering information about the current subject and session,
             #check if we have already processed the maximum number of subjects.
             if type(max_subject_sessions_to_proc) != type(None):
@@ -2383,7 +2387,7 @@ def update_processing(pipeline_name = None,
             #Grab the QC file for this subject so we can figure out which files can be used for processing.
             #If no QC requirements are specified in the comprehensive processing prerequisites, then the QC file will be ignored.
             if type(logs_directory) != type(None):
-                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = None)
+                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = None, verbose=verbose)
                 if (type(subj_ses_qc_file_path) == type(None)) and (qc_info_required == True):
                     print('    Skipping Processing - No QC file found for subject')
                     subject_processing_details['scans_tsv_present'] = False
