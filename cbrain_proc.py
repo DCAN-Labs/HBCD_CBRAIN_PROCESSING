@@ -2245,6 +2245,10 @@ def update_processing(pipeline_name = None,
     
     '''
 
+    if type(logs_directory) == str:
+        if os.path.exists(logs_directory) == False:
+            raise ValueError('Error: logs_directory does not exist. Make sure this is created before running the script.')
+
 
     group_id, bids_bucket, bids_data_provider_id, session_dps_dict = grab_cbrain_initialization_details(cbrain_api_token,
                                                                                              group_name,
