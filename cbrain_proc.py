@@ -2412,7 +2412,7 @@ def update_processing(pipeline_name = None,
             #Grab the QC file for this subject so we can figure out which files can be used for processing.
             #If no QC requirements are specified in the comprehensive processing prerequisites, then the QC file will be ignored.
             if type(logs_directory) != type(None):
-                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = None, verbose=verbose)
+                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = bids_client, verbose=verbose)
                 if (type(subj_ses_qc_file_path) == type(None)) and (qc_info_required == True):
                     print('    Skipping Processing - No QC file found for subject')
                     subject_processing_details['scans_tsv_present'] = False
