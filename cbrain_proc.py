@@ -567,13 +567,21 @@ def create_boto3_client(s3_config = None):
                 host_base = temp_line.split('=')[-1].strip()
                 if 'https' != host_base[:5]:
                     host_base = 'https://' + host_base
-        
+
     #Create s3 client
+    cfg = Config(
+        # Disable the new chunked-with-trailer uploads except when S3
+        # explicitly *requires* them (rare operations such as DeleteObjects).
+        request_checksum_calculation="when_required",
+        response_checksum_validation="when_required",
+    )
+
     client = boto3.client(
         's3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
-        endpoint_url =host_base
+        endpoint_url =host_base,
+        config=cfg
     )
     
     return client
@@ -2314,6 +2322,12 @@ def update_processing(pipeline_name = None,
     print('Processing will occur using BidsSubjects under the following DataProvider:\nName: {}, ID: {}, Bucket: {}, User Defined Prefix: {}'.format(bids_data_provider_name, bids_data_provider_id, bids_bucket, bids_bucket_prefix))
     print("      {} total files found under data provider".format(len(bids_data_provider_files)))
     ########################################################################################
+
+
+    ###########
+    #Make a client for the BIDS DP
+    bids_client = create_boto3_client(s3_config = bids_bucket_config)
+    ###########
     
     registered_and_s3_names, registered_and_s3_ids = find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config,
                                                        bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix)
@@ -2336,7 +2350,7 @@ def update_processing(pipeline_name = None,
             #This should always be something like 'ses-V01', 'ses-V02', etc.
             temp_ses_name = session_dps_dict[temp_ses]['prefix'].split('/')[-1]
 
-            
+
 
             #Before gathering information about the current subject and session,
             #check if we have already processed the maximum number of subjects.
