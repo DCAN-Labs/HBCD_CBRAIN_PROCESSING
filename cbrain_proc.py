@@ -1992,6 +1992,10 @@ def download_cbrain_misc_file(derivative_bucket_config, derivatives_bucket_prefi
             
     return downloaded_file
 
+def s3_prefix_has_files(s3, bucket: str, prefix: str) -> bool:
+    return s3.list_objects_v2(Bucket=bucket, Prefix=prefix, MaxKeys=1).get("KeyCount", 0) > 0
+
+
 def check_if_ancestor_file_selection_is_same(subject_id, session_files, ancestor_pipelines_file_selection_dict, qc_df = None,
                                              bids_bucket = None, bids_prefix = None, bids_bucket_config = None,
                                              session = None, session_agnostic_files = ['sessions.tsv'], associated_files_dict = None,
@@ -2349,6 +2353,13 @@ def update_processing(pipeline_name = None,
 
             #This should always be something like 'ses-V01', 'ses-V02', etc.
             temp_ses_name = session_dps_dict[temp_ses]['prefix'].split('/')[-1]
+
+            session_has_files = s3_prefix_has_files(bids_client, bids_bucket, os.path.join(bids_bucket_prefix, temp_subject, temp_ses_name))
+            if session_has_files == False:
+                if verbose:
+                    print('Evaluating: {}, {}'.format(temp_subject, temp_ses_name))
+                    print('   No files found for subject/session combo')
+                continue
 
 
 
