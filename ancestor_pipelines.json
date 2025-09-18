@@ -6,10 +6,11 @@
     "nibabies" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
     "made" : [],
+    "mrsqc" : [],
     "osprey" : ["bibsnet"],
     "qmri_postproc" : ["bibsnet"],
     "qsiprep_qc" : ["qsiprep"],
-    "bibsnet_work" : [],
-    "bibsnet" : ["bibsnet_work"],
-    "hbcd_motion" : []
+    "bibsnet" : [],
+    "hbcd_motion" : [],
+    "bme_x" : []
 }

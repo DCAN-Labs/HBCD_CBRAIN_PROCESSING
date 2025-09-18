@@ -3,6 +3,7 @@ from datetime import date
 import numpy as np
 import boto3
 from botocore.exceptions import ClientError
+from botocore.config import Config
 import pathlib
 from pathlib import Path
 import glob
@@ -396,11 +397,19 @@ def upload_processing_config_log(file_name, bucket = 'hbcd-cbrain-test', prefix 
                     host_base = 'https://' + host_base
         
     #Create s3 client
+    cfg = Config(
+        # Disable the new chunked-with-trailer uploads except when S3
+        # explicitly *requires* them (rare operations such as DeleteObjects).
+        request_checksum_calculation="when_required",
+        response_checksum_validation="when_required",
+    )
+
     client = boto3.client(
         's3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
-        endpoint_url =host_base
+        endpoint_url =host_base,
+        config=cfg
     )
 
     del access_key, secret_key, host_base
@@ -474,7 +483,7 @@ def is_qc_info_required(requirement_dictionary):
     return False
 
 
-def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids_prefix = 'assembly_bids', bucket = 'hbcd-pilot', client = None):
+def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids_prefix = 'assembly_bids', bucket = 'hbcd-pilot', client = None, verbose = False):
     '''Download scans.tsv file for a given subject/session
     
     Parameters
@@ -512,12 +521,28 @@ def download_scans_tsv_file(bucket_config, output_folder, subject, session, bids
     #Iterate through bucket to find potential subjects
     file_to_download = os.path.join(bids_prefix, subject, session, '{}_{}_scans.tsv'.format(subject,session))
     downloaded_file = os.path.join(output_folder, file_to_download.split('/')[-1])
-    try:
-        client.download_file(bucket, file_to_download, downloaded_file)
-    except:
+
+    file_exists = s3_file_exists(client, bucket, file_to_download)
+    if file_exists == False:
+        print('    Warning: expected to find scans.tsv file at s3://{}/{} but it does not exist'.format(bucket, file_to_download))
         return None
-            
+
+    if verbose:
+        print('    Downloading scans.tsv file from s3://{}/{}'.format(bucket, file_to_download))
+        
+    client.download_file(bucket, file_to_download, downloaded_file)
     return downloaded_file
+
+def s3_file_exists(s3, bucket: str, key: str) -> bool:
+    try:
+        s3.head_object(Bucket=bucket, Key=key)
+        return True
+    except botocore.exceptions.ClientError as e:
+        # A 404 means the object does not exist.
+        if e.response["Error"]["Code"] in ("404", "NoSuchKey", "NotFound"):
+            return False
+        # Any other error should be raised (permissions, etc.)
+        raise
 
 def create_boto3_client(s3_config = None):
     '''Utility to create a boto3 client
@@ -556,13 +581,21 @@ def create_boto3_client(s3_config = None):
                 host_base = temp_line.split('=')[-1].strip()
                 if 'https' != host_base[:5]:
                     host_base = 'https://' + host_base
-        
+
     #Create s3 client
+    cfg = Config(
+        # Disable the new chunked-with-trailer uploads except when S3
+        # explicitly *requires* them (rare operations such as DeleteObjects).
+        request_checksum_calculation="when_required",
+        response_checksum_validation="when_required",
+    )
+
     client = boto3.client(
         's3',
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
-        endpoint_url =host_base
+        endpoint_url =host_base,
+        config=cfg
     )
     
     return client
@@ -1402,7 +1435,7 @@ def check_bids_requirements_v2_inner(session_files, partial_requirements_dict, q
                     if temp_ses_agnostic in temp_file:
                         is_ses_agnostic = 1
                 if is_ses_agnostic == 0:
-                    print('   Exiting processing attempt: No QC info for {}'.format(temp_file))
+                    print('    Exiting processing attempt: Relevant file is not mentioned in scans.tsv: {}'.format(temp_file))
                     return None, 'No QC'
 
 
@@ -1777,7 +1810,7 @@ def grab_required_bids_files_inner(session_files, partial_requirements_dict, qc_
                     if temp_ses_agnostic in temp_file:
                         is_ses_agnostic = 1
                 if is_ses_agnostic == 0:
-                    print('   Exiting processing attempt: No QC info for {}'.format(temp_file))
+                    print('    FYI: Relevant file is not mentioned in scans.tsv: {}'.format(temp_file))
                     return None, None
 
 
@@ -1972,6 +2005,10 @@ def download_cbrain_misc_file(derivative_bucket_config, derivatives_bucket_prefi
         return None
             
     return downloaded_file
+
+def s3_prefix_has_files(s3, bucket: str, prefix: str) -> bool:
+    return s3.list_objects_v2(Bucket=bucket, Prefix=prefix, MaxKeys=1).get("KeyCount", 0) > 0
+
 
 def check_if_ancestor_file_selection_is_same(subject_id, session_files, ancestor_pipelines_file_selection_dict, qc_df = None,
                                              bids_bucket = None, bids_prefix = None, bids_bucket_config = None,
@@ -2208,6 +2245,10 @@ def update_processing(pipeline_name = None,
     
     '''
 
+    if type(logs_directory) == str:
+        if os.path.exists(logs_directory) == False:
+            raise ValueError('Error: logs_directory does not exist. Make sure this is created before running the script.')
+
 
     group_id, bids_bucket, bids_data_provider_id, session_dps_dict = grab_cbrain_initialization_details(cbrain_api_token,
                                                                                              group_name,
@@ -2303,6 +2344,12 @@ def update_processing(pipeline_name = None,
     print('Processing will occur using BidsSubjects under the following DataProvider:\nName: {}, ID: {}, Bucket: {}, User Defined Prefix: {}'.format(bids_data_provider_name, bids_data_provider_id, bids_bucket, bids_bucket_prefix))
     print("      {} total files found under data provider".format(len(bids_data_provider_files)))
     ########################################################################################
+
+
+    ###########
+    #Make a client for the BIDS DP
+    bids_client = create_boto3_client(s3_config = bids_bucket_config)
+    ###########
     
     registered_and_s3_names, registered_and_s3_ids = find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config,
                                                        bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix)
@@ -2324,6 +2371,15 @@ def update_processing(pipeline_name = None,
 
             #This should always be something like 'ses-V01', 'ses-V02', etc.
             temp_ses_name = session_dps_dict[temp_ses]['prefix'].split('/')[-1]
+
+            session_has_files = s3_prefix_has_files(bids_client, bids_bucket, os.path.join(bids_bucket_prefix, temp_subject, temp_ses_name))
+            if session_has_files == False:
+                if verbose:
+                    print('Evaluating: {}, {}'.format(temp_subject, temp_ses_name))
+                    print('   No files found for subject/session combo')
+                continue
+
+
 
             #Before gathering information about the current subject and session,
             #check if we have already processed the maximum number of subjects.
@@ -2374,7 +2430,7 @@ def update_processing(pipeline_name = None,
             #Grab the QC file for this subject so we can figure out which files can be used for processing.
             #If no QC requirements are specified in the comprehensive processing prerequisites, then the QC file will be ignored.
             if type(logs_directory) != type(None):
-                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = None)
+                subj_ses_qc_file_path = download_scans_tsv_file(bids_bucket_config, logs_directory, temp_subject, temp_ses_name, bids_prefix = bids_bucket_prefix, bucket = bids_bucket, client = bids_client, verbose=verbose)
                 if (type(subj_ses_qc_file_path) == type(None)) and (qc_info_required == True):
                     print('    Skipping Processing - No QC file found for subject')
                     subject_processing_details['scans_tsv_present'] = False

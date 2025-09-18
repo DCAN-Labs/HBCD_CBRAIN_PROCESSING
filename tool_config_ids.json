@@ -3,13 +3,15 @@
     "qsiprep" : 7808,
     "qsirecon" : 7805,
     "hbcd_qc" : 6878,
-    "nibabies" : 7838,
-    "xcp_d" : 7850,
-    "made" : 7856,
-    "osprey" : 7522,
+    "nibabies" : 11243,
+    "xcp_d" : 8503,
+    "made" : 11126,
+    "mrsqc" : 9239,
+    "osprey" : 9242,
     "qmri_postproc" : 7342,
     "qsiprep_qc" : 7958,
     "bibsnet" : 7631,
     "symri_qc" : 6686,
-    "hbcd_motion" : 7604
+    "hbcd_motion" : 7604,
+    "bme_x": 11129
 }

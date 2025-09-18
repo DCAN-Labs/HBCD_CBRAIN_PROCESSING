@@ -1,5 +1,5 @@
 {
-    "mriqc_output_dir": "qwerty",
+    "mriqc_output_dir": "output",
     "ica": "0",
     "float32": "0",
     "mem_gb": 7,

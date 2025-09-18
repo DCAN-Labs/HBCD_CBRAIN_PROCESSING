@@ -1,11 +1,12 @@
 {
-    "bibsnet_work" : "session_label",
     "bibsnet" : "session_label",
     "hbcd_motion" : "session_id",
     "hbcd_qc" : "session_id",
     "made" : "SessionLabel",
     "mriqc" : "session_id",
     "osprey" : "SessionLabel",
+    "mrsqc" : "SessionLabel",
+    "bme_x" : "SessionLabel",
     "nibabies" : "session_id",
     "qmri_postproc" : "SessionLabel",
     "qsiprep" : "session_id",

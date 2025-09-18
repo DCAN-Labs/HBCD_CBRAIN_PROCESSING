@@ -1,0 +1,8 @@
+{
+
+        "shortTE" : {"file_naming" : {"acq-shortTE" : true}},
+        "HERCULES" : {"file_naming" : {"acq-hercules" : true}},
+        "scans.tsv" : {"file_naming" : {"scans.tsv" : true}},
+        "sessions.tsv" : {"file_naming" : {"sessions.tsv" : true}}
+
+}

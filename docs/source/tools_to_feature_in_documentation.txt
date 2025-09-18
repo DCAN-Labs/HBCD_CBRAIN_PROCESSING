@@ -3,6 +3,7 @@ hbcd_motion
 hbcd_qc
 made
 mriqc
+mrsqc
 nibabies
 osprey
 qmri_postproc

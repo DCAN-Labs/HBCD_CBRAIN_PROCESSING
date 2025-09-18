@@ -6,6 +6,12 @@
 Welcome to the Healthy Brain and Child Development (HBCD) Study's Processing Documentation!
 ===========================================================================================
 
+Before exploring the documentation on this page, please look in
+the upper left hand corner at the "version" of the documentation
+that you are viewing. If you see "dev" in the name of the version,
+this means that the documentation you are looking at describes the
+processing being done in preparation for a release. Once the release
+occurs, a new version will be created without dev in the naming.
 
 This documentation base is an overview of the tools and
 processing steps used in the HBCD study. At a high level,
