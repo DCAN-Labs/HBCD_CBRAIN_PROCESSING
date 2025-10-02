@@ -8,6 +8,7 @@
     "mrsqc" : "SessionLabel",
     "bme_x" : "SessionLabel",
     "nibabies" : "session_id",
+    "nibabies_25.2.0rc2-0f306a2f" : "session_id",
     "qmri_postproc" : "SessionLabel",
     "qsiprep" : "session_id",
     "qsiprep_qc" : "SessionLabel",
