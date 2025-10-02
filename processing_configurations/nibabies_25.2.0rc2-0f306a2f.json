@@ -7,5 +7,6 @@
     "output_spaces": "MNI152NLin6Asym:res-2 fsnative anat func",
     "dummy_scans": 4,
     "multi_step_reg": "true",
-    "stop_on_first_crash": "true"
+    "stop_on_first_crash": "true",
+    "output_layout": "multiverse"
 }
