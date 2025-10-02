@@ -973,8 +973,8 @@ def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
 
 def grab_external_requirements(subject_name, cbrain_files, 
                                 requirements_dict,
-                                bids_data_provider_id = None,
-                                derivatives_data_provider_id = None):
+                                bids_data_provider_id,
+                                derivatives_data_provider_id):
     '''Grab's external requirements for a subject
 
     External requirements are either non-BIDS files
@@ -1001,11 +1001,11 @@ def grab_external_requirements(subject_name, cbrain_files,
         both bids_data_provider_id and derivatives_data_provider_id
         are specified.
     requirements_dict : dict
-    bids_data_provider_id : int or None, default None
-        If specified, this will restrict the search for
+    bids_data_provider_id : int
+        This will restrict the search for
         BIDS files to the specified data provider
-    derivatives_data_provider_id : int or None, default None
-        If specified, this will restrict the search for
+    derivatives_data_provider_id : int
+        This will restrict the search for
         derivatives files to the specified data provider.
         Any non-numeric requirements (i.e. file types) that
         are not BidsSubjects will be assumed to be derivatives
@@ -1027,28 +1027,44 @@ def grab_external_requirements(subject_name, cbrain_files,
     subject_external_requirements = {}
     for temp_requirement in requirements_dict.keys():
         requirement_found = False
+
+        if type(requirements_dict[temp_requirement]) == dict:
+            if ('type' not in requirements_dict[temp_requirement].keys()) or ('tags' not in requirements_dict[temp_requirement]):
+                raise ValueError('Error: dict requirements dict entries must have keys type and tags but found: {}'.format(requirements_dict[temp_requirement].keys()))
+            for temp_file in cbrain_files:
+                if (temp_file['name'] == subject_name) and (temp_file['type'] == requirements_dict[temp_requirement]['type']) and (temp_file['data_provider_id'] == derivatives_data_provider_id):
+                    if 'tags' in temp_file.keys():
+                        if temp_file['tags'] == requirements_dict[temp_requirement]['tags']:
+                            requirement_found = True
+                            subject_external_requirements[temp_requirement] = temp_file['id']
+                            requirements_tracking_dict[temp_requirement] = 'Satisfied'
+                            break
+            if requirement_found == False:
+                requirements_tracking_dict[temp_requirement] = 'No File'
+                print('    Requirement {} not found for subject {}'.format(temp_requirement, subject_name))
+                return None, requirements_tracking_dict
+
         #If the requirement is numeric, then this refers to a CBRAIN file ID
-        if requirements_dict[temp_requirement].isnumeric():
+        elif requirements_dict[temp_requirement].isnumeric():
             subject_external_requirements[temp_requirement] = requirements_dict[temp_requirement]
         
-        #Otherwise, we will look for a CBRAIN file with the specified file type and with the subject
-        #name
-        else:
+        #If the requirement is a BidsSubject, look in the BIDS DP
+        elif (type(requirements_dict[temp_requirement]) == str) and (requirements_dict[temp_requirement] == 'BidsSubject'):
             for temp_file in cbrain_files:
-                if (temp_file['name'] == subject_name) and (temp_file['type'] == requirements_dict[temp_requirement]):
-                    #Dont use the file if (1) the bids data provider is specified
-                    # (2) the file is a BIDS subject and (3)
-                    # the file comes from a non-BIDS DP
-                    if type(bids_data_provider_id) != type(None):
-                        if (temp_file['type'] == 'BidsSubject') and (bids_data_provider_id != temp_file['data_provider_id']):
-                            continue
-
-                    #Dont use the file if (1) the deriv data provider is specified
-                    # (2) the file is not a BIDS subject and (3)
-                    # the file comes from the BIDS DP
-                    if type(derivatives_data_provider_id) != type(None):
-                        if (temp_file['type'] != 'BidsSubject') and (bids_data_provider_id == temp_file['data_provider_id']):
-                            continue
+                if (temp_file['name'] == subject_name) and (temp_file['type'] == requirements_dict[temp_requirement]) and (temp_file['data_provider_id'] == bids_data_provider_id):
+                    requirement_found = True
+                    subject_external_requirements[temp_requirement] = temp_file['id']
+                    requirements_tracking_dict[temp_requirement] = 'Satisfied'
+                    break
+            if requirement_found == False:
+                requirements_tracking_dict[temp_requirement] = 'No File'
+                print('    Requirement {} not found for subject {}'.format(temp_requirement, subject_name))
+                return None, requirements_tracking_dict
+        
+        #If the requirement is not a BidsSubject, look in the Derivatives DP
+        elif (type(requirements_dict[temp_requirement]) == str) and (requirements_dict[temp_requirement] != 'BidsSubject'):
+            for temp_file in cbrain_files:
+                if (temp_file['name'] == subject_name) and (temp_file['type'] == requirements_dict[temp_requirement]) and (temp_file['data_provider_id'] == derivatives_data_provider_id):
                     requirement_found = True
                     subject_external_requirements[temp_requirement] = temp_file['id']
                     requirements_tracking_dict[temp_requirement] = 'Satisfied'
@@ -2512,8 +2528,8 @@ def update_processing(pipeline_name = None,
             #that should already be available for the subject on CBRAIN if the subject is ready for processing). Note that
             #the files being passed to this function are already specific to a single data provider.
             subject_external_requirements, req_tracking_dict = grab_external_requirements(temp_subject, bids_data_provider_files + cbrain_deriv_files[temp_ses],
-                                                                        external_requirements_dict, bids_data_provider_id = bids_data_provider_id,
-                                                                        derivatives_data_provider_id = session_dps_dict[temp_ses]['id']) #implement function for this...
+                                                                        external_requirements_dict, bids_data_provider_id,
+                                                                        session_dps_dict[temp_ses]['id']) #implement function for this...
             
             #Update tracking dict based on grab_external_requirements results
             for temp_key in req_tracking_dict.keys():
