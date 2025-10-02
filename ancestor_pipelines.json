@@ -4,7 +4,7 @@
     "qsirecon" : ["qsiprep"],
     "hbcd_qc" : [],
     "nibabies" : ["bibsnet"],
-    "nibabies_25.2.0rc2-0f306a2f" : ["bibsnet"],
+    "nibabies_25.2.0-0f306a2f" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
     "made" : [],
     "mrsqc" : [],
