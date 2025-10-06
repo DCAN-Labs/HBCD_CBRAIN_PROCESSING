@@ -1,6 +1,6 @@
 {
     "subject_dir" : "BidsSubject",
-    "preproc_fmri_dir" : {"type" : "NibabiesOutput", "tags" : ["25.2.0-0f306a2f"]},
+    "preproc_fmri_dir" : {"type" : "NibabiesOutput", "tag_names" : ["25.2.0-0f306a2f"]},
     "preproc_output_json" : "5974411",
     "fs_license_file" : "4323067"
 }

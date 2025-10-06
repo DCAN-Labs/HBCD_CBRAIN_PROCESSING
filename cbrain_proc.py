@@ -1029,12 +1029,12 @@ def grab_external_requirements(subject_name, cbrain_files,
         requirement_found = False
 
         if type(requirements_dict[temp_requirement]) == dict:
-            if ('type' not in requirements_dict[temp_requirement].keys()) or ('tags' not in requirements_dict[temp_requirement]):
-                raise ValueError('Error: dict requirements dict entries must have keys type and tags but found: {}'.format(requirements_dict[temp_requirement].keys()))
+            if ('type' not in requirements_dict[temp_requirement].keys()) or ('tag_names' not in requirements_dict[temp_requirement]):
+                raise ValueError('Error: dict requirements dict entries must have keys type and tag_names but found: {}'.format(requirements_dict[temp_requirement].keys()))
             for temp_file in cbrain_files:
                 if (temp_file['name'] == subject_name) and (temp_file['type'] == requirements_dict[temp_requirement]['type']) and (temp_file['data_provider_id'] == derivatives_data_provider_id):
-                    if 'tags' in temp_file.keys():
-                        if temp_file['tags'] == requirements_dict[temp_requirement]['tags']:
+                    if 'tag_names' in temp_file.keys():
+                        if temp_file['tag_names'] == requirements_dict[temp_requirement]['tag_names']:
                             requirement_found = True
                             subject_external_requirements[temp_requirement] = temp_file['id']
                             requirements_tracking_dict[temp_requirement] = 'Satisfied'
