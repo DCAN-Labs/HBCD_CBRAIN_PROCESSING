@@ -1970,9 +1970,10 @@ def load_requirements_infos(pipeline_name):
     #need to be met for a file to be included in processing
     requirements_files = []
     comp_proc_recs_dir = os.path.join(Path(inspect.getfile(update_processing)).absolute().parent.resolve(), 'comprehensive_processing_prerequisites')
+    escaped_pipeline_name = re.escape(pipeline_name)
     for filename in os.listdir(comp_proc_recs_dir):
         # Use regular expression to match pipeline name with or without underscore and number
-        match = re.match(rf"^{pipeline_name}(?:_[0-9]+)?\.json$", filename)
+        match = re.match(rf"^{escaped_pipeline_name}(?:_[0-9]+)?\.json$", filename)
         if match:
             requirements_files.append(os.path.join(comp_proc_recs_dir, filename))
 
