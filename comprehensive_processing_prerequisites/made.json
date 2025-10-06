@@ -1,6 +1,7 @@
 {
 
-    "eeg" : {"file_naming" : {"acq-eeg" : true}},
+    "eeg" : {"file_naming" : {"acq-eeg" : true},
+             "qc_criteria" : [[{"QC" : [1, "equals"]}]]},
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
     
 }
