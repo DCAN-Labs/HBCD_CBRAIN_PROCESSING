@@ -5,6 +5,7 @@
     "hbcd_qc" : [],
     "nibabies" : ["bibsnet"],
     "nibabies_25.2.0-0f306a2f" : ["bibsnet"],
+    "nibabies_25.2.0-2afa9081" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
     "xcp_d-0f306a2f+0ef9c88a" : ["nibabies_25.2.0-0f306a2f", "bibsnet"],
     "made" : [],

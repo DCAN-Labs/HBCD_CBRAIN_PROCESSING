@@ -9,6 +9,7 @@
     "bme_x" : "SessionLabel",
     "nibabies" : "session_id",
     "nibabies_25.2.0-0f306a2f" : "session_id",
+    "nibabies_25.2.0-2afa9081" : "session_id",
     "qmri_postproc" : "SessionLabel",
     "qsiprep" : "session_id",
     "qsiprep_qc" : "SessionLabel",
