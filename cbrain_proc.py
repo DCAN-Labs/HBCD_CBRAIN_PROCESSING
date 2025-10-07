@@ -172,7 +172,7 @@ def find_s3_subjects(bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assemb
 
     # Create a PageIterator    
     page_iterator = create_page_iterator(bucket = bucket, prefix = prefix, bucket_config = bids_bucket_config)
-
+    levels = count = prefix.rstrip("/").count("/") + 1
     #Iterate through bucket to find potential subjects
     s3_contents = []
     potential_subjects = []
@@ -180,7 +180,7 @@ def find_s3_subjects(bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assemb
     for page in page_iterator:
         if page.get('Contents', None):
             for temp_dict in page['Contents']:
-                potential_subjects.append(temp_dict['Key'].split('/')[1])
+                potential_subjects.append(temp_dict['Key'].split('/')[levels])
                 #potential_subjects_dates.append(temp_dict['LastModified'])
 
     #Find unique files starting with "sub-*"
