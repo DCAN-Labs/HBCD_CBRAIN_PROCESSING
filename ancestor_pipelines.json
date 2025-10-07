@@ -6,7 +6,7 @@
     "nibabies" : ["bibsnet"],
     "nibabies_25.2.0-0f306a2f" : ["bibsnet"],
     "xcp_d" : ["nibabies", "bibsnet"],
-    "xcp_d-0f306a2f+6793c7cf" : ["nibabies_25.2.0-0f306a2f", "bibsnet"],
+    "xcp_d-0f306a2f+0ef9c88a" : ["nibabies_25.2.0-0f306a2f", "bibsnet"],
     "made" : [],
     "mrsqc" : [],
     "osprey" : ["bibsnet"],
