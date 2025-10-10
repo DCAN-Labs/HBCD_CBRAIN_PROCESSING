@@ -5,9 +5,11 @@ hbcd_qc
 made
 mriqc
 mrsqc
-nibabies
+nibabies_25.2.0-0f306a2f
+nibabies_25.2.0-2afa9081
 osprey
 qmri_postproc
 qsiprep
 qsirecon
-xcp_d
+xcp_d-0f306a2f+0ef9c88a
+xcp_d-2afa9081+0ef9c88a
