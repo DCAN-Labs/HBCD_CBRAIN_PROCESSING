@@ -41,6 +41,15 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
             f.write(f"* **{temp_key}**: {escape_rst_special_chars(json_data[temp_key])}\n")
         f.write("\n\n")
 
+        with open('configuration_details_text.json', 'r') as f2:
+            configuration_text_dict = json.load(f2)
+        if tool_name in configuration_text_dict.keys():
+            f.write("Configuration Details\n")
+            f.write("*********************\n\n")
+            f.write(configuration_text_dict[tool_name])
+            f.write("\n\n")
+
+
         with open('../../external_requirements/{}.json'.format(tool_name), 'r') as f2:
             external_requirements = json.load(f2)
         with open('../../processing_configurations/{}.json'.format(tool_name), 'r') as f3:
