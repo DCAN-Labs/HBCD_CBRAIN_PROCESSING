@@ -1,0 +1,19 @@
+{
+    "Acknowledgements": "Fake single subject dataset created by boutiques_bids_single_subject_maker.rb rev. 7cfbb3ec",
+    "Authors": [
+        "TODO"
+    ],
+    "GeneratedBy": [{"Name": "TODO"}],
+    "BIDSVersion": "1.4.1",
+    "DatasetDOI": "TODO",
+    "Funding": [
+        "TODO"
+    ],
+    "HowToAcknowledge": "TODO",
+    "License": "TODO",
+    "Name": "CbrainBidsSingleSubject",
+    "ReferencesAndLinks": [
+        "TODO"
+    ],
+    "DatasetType": "derivative"
+}
