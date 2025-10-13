@@ -1,7 +1,6 @@
 bibsnet
 bme_x
 hbcd_motion
-hbcd_qc
 made
 mriqc
 mrsqc
