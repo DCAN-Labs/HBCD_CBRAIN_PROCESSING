@@ -18,5 +18,10 @@ description than the summary provided here. If you are interested in learning
 about these files, please see :doc:`this page <hidden_proc_details_folder>`. 
 
 
+.. image:: images/pipeline_workflow_release_2.0.svg
+
+
+
+
 Tool Names
 ~~~~~~~~~~
