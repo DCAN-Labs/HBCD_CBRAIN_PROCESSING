@@ -1,6 +1,8 @@
 {
 
-    "eeg" : {"file_naming" : {"acq-eeg" : true}},
+    "eeg" : {"file_naming" : {"acq-eeg" : true,
+                              ".set" : true},
+             "qc_criteria" : [[{"loris_qc_status" : ["Pass", "equals"]}]]},
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
     
 }

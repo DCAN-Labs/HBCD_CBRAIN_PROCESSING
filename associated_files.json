@@ -4,6 +4,7 @@
                      "_sbref.bvec"],
     "_bold.nii.gz" : ["_sbref.nii.gz", "_sbref.json"],
     ".nii.gz" : [".json"],
+    ".set" : [".fdt"],
     "_sessions.tsv" : ["_sessions.json"],
     "motion.tsv" : ["motion.json", "channels.json", "channels.tsv"],
     "sessions.tsv" : ["sessions.json"],

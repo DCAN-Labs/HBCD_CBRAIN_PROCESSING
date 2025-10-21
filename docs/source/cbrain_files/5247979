@@ -1,0 +1,60 @@
+{
+     "Cerebral-Cortex": [
+          "Left-Cerebral-Cortex",
+          "Right-Cerebral-Cortex"
+     ],
+     "Cerebral-White-Matter": [
+          "Left-Cerebral-White-Matter",
+          "Right-Cerebral-White-Matter"
+     ],
+     "Thalamus": [
+          "Left-Thalamus",
+          "Right-Thalamus"
+     ],
+     "Putamen": [
+          "Left-Putamen",
+          "Right-Putamen"
+     ],
+     "Caudate": [
+          "Left-Caudate",
+          "Right-Caudate"
+     ],
+     "Cerebellum-Cortex": [
+          "Left-Cerebellum-Cortex",
+          "Right-Cerebellum-Cortex"
+     ],
+     "Cerebellum-White-Matter": [
+          "Left-Cerebellum-White-Matter",
+          "Right-Cerebellum-White-Matter"
+     ],
+     "Pallidum": [
+          "Left-Pallidum",
+          "Right-Pallidum"
+     ],
+     "Hippocampus": [
+          "Left-Hippocampus",
+          "Right-Hippocampus"
+     ],
+     "Amygdala": [
+          "Left-Amygdala",
+          "Right-Amygdala"
+     ],
+     "Lateral-Ventricle": [
+          "Left-Lateral-Ventricle",
+          "Right-Lateral-Ventricle"
+     ],
+     "Brain-Stem": [
+	  "Brain-Stem"
+     ],
+     "Accumbens-Area": [
+          "Left-Accumbens-area",
+          "Right-Accumbens-area"
+     ],
+     "VentralDC": [
+          "Left-VentralDC",
+          "Right-VentralDC"
+     ],
+     "Vermis": [
+          "Vermis"
+     ]
+}

@@ -8,9 +8,13 @@
     "mrsqc" : "SessionLabel",
     "bme_x" : "SessionLabel",
     "nibabies" : "session_id",
+    "nibabies_25.2.0-0f306a2f" : "session_id",
+    "nibabies_25.2.0-2afa9081" : "session_id",
     "qmri_postproc" : "SessionLabel",
     "qsiprep" : "session_id",
     "qsiprep_qc" : "SessionLabel",
     "qsirecon" : "session_id",
-    "xcp_d" : "session_id"
+    "xcp_d" : "session_id",
+    "xcp_d-0f306a2f+0ef9c88a" : "session_id",
+    "xcp_d-2afa9081+0ef9c88a" : "session_id"
 }

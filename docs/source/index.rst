@@ -66,3 +66,4 @@ that may contain information you are interested in.
    tool_details
    boutiques_descriptors
    references_text
+   workflow_managing_cbrain_proc
