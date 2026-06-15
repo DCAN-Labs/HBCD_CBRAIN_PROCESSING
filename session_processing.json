@@ -13,9 +13,7 @@
                                  "HBCD-Main-Anon-Derivatives-V03-V2",
                                  "HBCD-Main-Anon-Derivatives-V04-V2",
                                  "HBCD-Main-Anon-Derivatives-V06-V2"],
-    "made" : ["HBCD-Main-Anon-Derivatives-V03-V2",
-              "HBCD-Main-Anon-Derivatives-V04-V2",
-              "HBCD-Main-Anon-Derivatives-V06-V2"],
+   
     "osprey" : ["HBCD-Main-Anon-Derivatives-V02-V2",
                 "HBCD-Main-Anon-Derivatives-V03-V2",
                 "HBCD-Main-Anon-Derivatives-V04-V2",
