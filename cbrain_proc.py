@@ -91,7 +91,7 @@ def find_cbrain_subjects(cbrain_api_token, data_provider_id = 710): #For the rea
 
 
 def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config, bids_bucket = 'hbcd-pilot',
-                                           bids_prefix = 'assembly_bids'):
+                                           bids_prefix = 'assembly_bids', filter_csv_path=None):
     """Find subjects that may be ready for processing
     
     Looks for subjects that are already registered in CBRAIN
@@ -122,7 +122,10 @@ def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_buc
     """
 
     #Find S3 Subjects
-    s3_subjects = find_s3_subjects(bids_bucket_config, bucket = bids_bucket, prefix = bids_prefix)
+    if filter_csv_path is None:
+        s3_subjects = find_s3_subjects(bids_bucket_config, bucket = bids_bucket, prefix = bids_prefix)
+    else:
+        s3_subjects = find_s3_subjects_filtered_on_csv(bids_bucket_config, filter_csv_path, bucket = bids_bucket, prefix = bids_prefix)
     s3_subjects.sort()
 
     #Narrow down BIDS DP Files to BidsSubject instances
@@ -139,6 +142,55 @@ def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_buc
                 break
 
     return registered_and_s3_names, registered_and_s3_ids
+
+def find_s3_subjects_filtered_on_csv(bids_bucket_config, csv_path, bucket='hbcd-pilot', prefix='assembly_bids'):
+    '''Utility to find BIDS subjects in S3 bucket that match a CSV candid list
+    
+    Parameters
+    ----------
+    bids_bucket_config : str
+        Config file to identify S3 credentials
+    csv_path : str
+        Path to CSV file containing 'candid' column with subject identifiers
+    bucket : str, default 'hbcd-pilot'
+        Name of the bucket to query for subjects
+    prefix : str, default 'assembly_bids'
+        Prefix to restrict file search
+        (e.g., if data is at s3://hbcd-pilot/assembly_bids/sub-1,
+        then prefix='assembly_bids')
+        
+    Returns
+    -------
+    s3_subjects : list
+        List of subjects found in S3 that match candid values from CSV.
+        Only includes folders matching 'sub-*' naming pattern.
+    '''
+    
+    # Read CSV and extract candid values
+    df = pd.read_csv(csv_path)
+    csv_candids = set(df['candid'].astype(str).unique())
+    
+    # Create page iterator for S3 bucket
+    page_iterator = create_page_iterator(
+        bucket=bucket, 
+        prefix=prefix, 
+        bucket_config=bids_bucket_config
+    )
+    
+    # Find potential subjects in S3
+    potential_subjects = set()
+    for page in page_iterator:
+        if 'Contents' in page:
+            for item in page['Contents']:
+                # Extract directory name after prefix
+                subject = item['Key'].split('/')[1]
+                if 'sub-' in subject:
+                    potential_subjects.add(subject)
+    
+    # Return only subjects that match CSV candids
+    s3_subjects = [sub for sub in potential_subjects if any(f'sub-{candid}' in sub for candid in csv_candids)]
+
+    return sorted(s3_subjects)
 
 def find_s3_subjects(bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assembly_bids'):
     '''Utility to find BIDS subjects in S3 bucket
@@ -2079,7 +2131,8 @@ def update_processing(pipeline_name = None,
                         check_ancestor_pipelines = True,
                         verbose = False,
                         minimum_file_age_days = 14,
-                        max_subject_sessions_to_proc = None):
+                        max_subject_sessions_to_proc = None,
+                        filter_csv_path=None):
     
     '''Function to manage processing of data using CBRAIN
     
@@ -2314,7 +2367,7 @@ def update_processing(pipeline_name = None,
     ########################################################################################
     
     registered_and_s3_names, registered_and_s3_ids = find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config,
-                                                       bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix)
+                                                       bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix, filter_csv_path=filter_csv_path)
     print('      Found {} BidsSubjects under DP\n'.format(len(registered_and_s3_names)))
     
     
