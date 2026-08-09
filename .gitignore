@@ -1,0 +1,6 @@
+*pycache*
+*.csv
+launch_processing.py
+
+
+*logs

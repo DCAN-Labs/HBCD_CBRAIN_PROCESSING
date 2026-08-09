@@ -10,5 +10,6 @@
     "qsiprep_qc" : ["qsiprep"],
     "bibsnet_work" : [],
     "bibsnet" : ["bibsnet_work"],
-    "hbcd_motion" : []
+    "hbcd_motion" : [],
+    "hbcd_ecg" : []
 }
