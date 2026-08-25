@@ -373,11 +373,19 @@ if __name__ == "__main__":
     token = load_cbrain_token()
 
     print(" Fetching tasks from CBRAIN")
+
+    DAYS_CUTOFF = 30
+    cutoff_date = (
+    datetime.now(timezone.utc) -
+    timedelta(days=DAYS_CUTOFF)
+    ).strftime("%Y-%m-%d")
+
     tasks = fetch_cbrain_objects(
         token,
         "tasks",
         params={
-            "status[]": ["Completed", "Failed On Cluster"]
+            "status[]": ["Completed", "Failed On Cluster"],
+            "created_at": f">{cutoff_date}"
         },
         # target_ids=TARGET_TASK_IDS
     )
