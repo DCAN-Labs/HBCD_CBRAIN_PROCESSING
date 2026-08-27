@@ -226,30 +226,51 @@ def grab_cbrain_initialization_details(cbrain_api_token, group_name, bids_data_p
     return group_id, bids_bucket, bids_dp_id, session_dps_dict
 
 
-def find_cbrain_entities(cbrain_api_token, entity_type):
+def find_cbrain_entities(cbrain_api_token, entity_type, data_provider_ids=None):
 
     base_url = 'https://portal.cbrain.mcgill.ca'
-    tasks = []
-    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
+    entities = []
+    page = 1
+    per_page = 999
+
+    # Normalize single ints into lists so callers can pass either
+    if data_provider_ids is not None and not isinstance(data_provider_ids, (list, tuple)):
+        data_provider_ids = [data_provider_ids]
 
     while True:
-        tasks_response = requests.get(
-            url = '/'.join([base_url, entity_type]),
-            data = tasks_request,
-            headers = {'Accept': 'application/json'}
+
+        entities_request = {
+            'cbrain_api_token': cbrain_api_token,
+            'page': page,
+            'per_page': per_page,
+        }
+
+        if data_provider_ids is not None:
+            print("data provider ids:", data_provider_ids)
+            entities_request['data_provider_id[]'] = [int(d) for d in data_provider_ids]
+
+        print("request:")
+        print(entities_request)
+
+        entities_response = requests.get(
+            url='/'.join([base_url, entity_type]),
+            params=entities_request,
+            headers={'Accept': 'application/json'}
         )
-        if tasks_response.status_code != requests.codes.ok:
-            print('User tasks request failed.')
-            print(tasks_response)
+
+        if entities_response.status_code != requests.codes.ok:
+            print('User entities request failed.')
+            print(entities_response)
             break
-        # Collect the responses on this page then increment
-        tasks += tasks_response.json()
-        tasks_request['page'] += 1
-        # Stop requesting responses when we're at the last page
-        if len(tasks_response.json()) < tasks_request['per_page']:
-            break 
-            
-    return tasks
+
+        page_entities = entities_response.json()
+        entities += page_entities
+        page += 1
+
+        if len(page_entities) < per_page:
+            break
+
+    return entities
 
 def grab_subject_file_info(subject_id, bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assembly_bids'):
     '''Utility that grabs BIDS data for a given subject
@@ -653,6 +674,14 @@ def cbrain_mark_as_newer(file_id, cbrain_api_token):
     return
         
 def file_exists_under_prefix(bucket_name, prefix, s3_config):
+    pipeline_map = {
+        'nibabies_25.2.0-0f306a2f' : 'nibabies-25.2.0-0f306a2f',
+        'nibabies_25.2.0-2afa9081' : 'nibabies-25.2.0-2afa9081'
+    }
+    matched_key = next((k for k in pipeline_map if k in prefix), None)
+    if matched_key:
+        prefix = prefix.replace(matched_key, pipeline_map[matched_key])
+        
     s3 = create_boto3_client(s3_config = s3_config)
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix, MaxKeys=1)
     return 'Contents' in response
@@ -921,53 +950,58 @@ def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api
     return status, json_for_logging
 
 
-def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
+def find_current_cbrain_tasks(cbrain_api_token, tool_config_id=None):
     '''Generates info on extended file list files
-    
+
     Parameters
     ----------
-    
+
     cbrain_api_token : str
         The CBRAIN API token for the current session
-    data_provider_id : None or int
-        Restrict tasks to the specific data provider
-        
+    tool_config_id : None or int
+        Restrict tasks to the specific tool config
+
     Returns
     -------
     list of dictionaries with info on current CBRAIN tasks
-    
+
     '''
     base_url = 'https://portal.cbrain.mcgill.ca'
     tasks = []
-    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
+    page = 1
+    per_page = 999
 
     while True:
+
+        tasks_request = {
+            'cbrain_api_token': cbrain_api_token,
+            'page': page,
+            'per_page': per_page,
+        }
+
+        if tool_config_id is not None:
+            tasks_request['_simple_filters'] = 1
+            tasks_request['tool_config_id'] = int(tool_config_id)
+
         tasks_response = requests.get(
-            url = '/'.join([base_url, 'tasks']),
-            data = tasks_request,
-            headers = {'Accept': 'application/json'}
+            url='/'.join([base_url, 'tasks']),
+            params=tasks_request,
+            headers={'Accept': 'application/json'}
         )
+
         if tasks_response.status_code != requests.codes.ok:
             print('User tasks request failed.')
             print(tasks_response)
             break
-        # Collect the responses on this page then increment
-        tasks += tasks_response.json()
-        tasks_request['page'] += 1
-        # Stop requesting responses when we're at the last page
-        if len(tasks_response.json()) < tasks_request['per_page']:
-            break 
-            
-    if type(data_provider_id) == type(None):
-        return tasks
-    else:
-        if type(data_provider_id) == str:
-            data_provider_id = int(data_provider_id)
-        tasks_to_return = []
-        for temp_task in tasks:
-            if temp_task['results_data_provider_id'] == data_provider_id:
-                tasks_to_return.append(temp_task)
-        return tasks_to_return
+
+        page_tasks = tasks_response.json()
+        tasks += page_tasks
+        page += 1
+
+        if len(page_tasks) < per_page:
+            break
+
+    return tasks
 
 
 
@@ -1726,6 +1760,12 @@ def grab_required_bids_files_v2(subject_id, session_files, requirements_dict, qc
                 partial_file_list, partial_metadata_dict = grab_required_bids_files_inner(session_files, requirements_dict[parent_requirement], 
                                                  qc_index = qc_index, qc_df = qc_df, 
                                                  session_agnostic_files = session_agnostic_files, verbose = verbose)
+                # NEW: catch the hard-failure signal (file missing from scans.tsv)
+                # before treating this as a successful iteration.
+                if partial_file_list is None:
+                    print('    Hard failure: required file missing from scans.tsv. Aborting this requirement.')
+                    return None, None
+                    
                 continue_loop = False
             #if 1:
             except Exception as error:
@@ -2339,14 +2379,32 @@ def update_processing(pipeline_name = None,
     ###################################################################################
         
     #Grab CBRAIN Tasks that will later be referenced, and seperate them by results data provider ########
-    current_cbrain_tasks = find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None) #this is bids_data_provider_id because we currently only support processing that grabs/saves from one DP
+    current_cbrain_tasks = find_current_cbrain_tasks(cbrain_api_token, tool_config_id=tool_config_id) #this is bids_data_provider_id because we currently only support processing that grabs/saves from one DP
+    if verbose:
+        print('The following is a list of all current CBRAIN tasks for the given tool config id:')
+        print(current_cbrain_tasks)
+        # save tasks to a json for later reference
+        with open(os.path.join(logs_directory, 'cbrain_tasks.json'), 'w') as f:
+            json.dump(current_cbrain_tasks, f, indent=4)
+    
     cbrain_session_tasks = {}
     for temp_ses in session_dps_dict.keys():
         temp_dp_id = session_dps_dict[temp_ses]['id']
         cbrain_session_tasks[temp_ses] = list(filter(lambda f: temp_dp_id == f['results_data_provider_id'], current_cbrain_tasks))
 
     #Grab CBRAIN Files that will later be referenced ##################################################
-    cbrain_files = find_cbrain_entities(cbrain_api_token, 'userfiles')
+    data_provider_ids = [bids_data_provider_id] + [
+        session_dps_dict[temp_ses]['id'] for temp_ses in session_dps_dict.keys()
+    ]
+    cbrain_files = find_cbrain_entities(cbrain_api_token, 'userfiles',data_provider_ids=data_provider_ids)
+    if verbose:
+        print('The following is a list of all data provider ids that will be used to find files in CBRAIN:')
+        print(data_provider_ids)
+        print('The following is a list of all files found under the BIDS and Derivatives DataProviders:')
+        print(cbrain_files)
+        #save this list of files to a json for later reference
+        with open(os.path.join(logs_directory, 'cbrain_files.json'), 'w') as f:
+            json.dump(cbrain_files, f, indent=4)
     bids_data_provider_files = list(filter(lambda f: bids_data_provider_id == f['data_provider_id'], cbrain_files))
     cbrain_deriv_files = {}
     print('The following derivative data providers will be used to see if processing is needed + to house the outputs of jobs launched later in the script:')
@@ -2434,6 +2492,7 @@ def update_processing(pipeline_name = None,
                 print('    Already has derivatives')
                 continue
             else:
+                print(f'    No derivatives found in {session_dps_dict[temp_ses]["bucket"]}, {subject_derivatives_prefix}')
                 subject_processing_details['derivatives_found'] = False
 
             #Check what type of processing has already occured for the subject with
@@ -2669,8 +2728,8 @@ def update_processing(pipeline_name = None,
     if type(logs_directory) != type(None):
         log_csv_name = os.path.join(logs_directory, 'processing_details_{}.csv'.format(pipeline_name))
         log_html_name = os.path.join(logs_directory, 'processing_details_{}.html'.format(pipeline_name))
-        study_tracking_df = html_tools.reformat_df_and_produce_proc_html(study_tracking_df, pipeline_name, log_html_name, file_selection_dict)
         study_tracking_df.to_csv(log_csv_name, index = False)
+        study_tracking_df = html_tools.reformat_df_and_produce_proc_html(study_tracking_df, pipeline_name, log_html_name, file_selection_dict)
 
     
     return study_tracking_df

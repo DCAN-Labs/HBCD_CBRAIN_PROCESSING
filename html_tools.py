@@ -38,6 +38,7 @@ def color_specific_value_cells(styler, df, primary_column, value="specific_value
 
     # Define the function to apply styles
     def apply_styles(row):
+        colors = [''] * len(row)  # Initialize with no coloring
         if row.name in df.index:
             primary_condition = mask.iloc[row.name]
             colors = [''] * len(row)  # Initialize with no coloring
