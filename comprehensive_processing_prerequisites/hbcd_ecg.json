@@ -1,0 +1,6 @@
+{
+
+    "ecg" : {"file_naming" : {"acq-ecg" : true}},
+    "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
+    
+}

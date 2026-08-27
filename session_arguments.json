@@ -2,5 +2,6 @@
     "bibsnet_work" : "session_label",
     "bibsnet" : "session_label",
     "hbcd_motion" : "session_id",
-    "made" : "SessionLabel"
+    "made" : "SessionLabel",
+    "hbcd_ecg" : "SessionLabel"
 }

@@ -175,10 +175,19 @@ def find_s3_subjects_filtered_on_csv(bids_bucket_config, csv_path, bucket='hbcd-
 
     # Read CSV and extract candid values
     df = pd.read_csv(csv_path)
+
+    # Check if the 'candid' column exists
+    if 'candid' not in df.columns:
+        raise KeyError("Required column 'candid' not found in DataFrame")
+
     csv_candids = set(df['candid'].astype(str).unique())
 
+
     # Build the set of exact expected subject folder names, e.g. {'sub-123', 'sub-456', ...}
-    csv_subject_names = {f'sub-{candid}' for candid in csv_candids}
+    csv_subject_names = {
+        candid if candid.startswith('sub-') else f'sub-{candid}'
+        for candid in csv_candids
+    }
 
     # Create page iterator for S3 bucket
     page_iterator = create_page_iterator(
@@ -740,12 +749,15 @@ def grab_json(json_config_location, pipeline_name, session_label = None):
         with open(ses_config_location, 'r') as f:
             ses_json_contents = json.load(f)
         if pipeline_name in ses_json_contents.keys():
-            json_contents[ses_json_contents[pipeline_name]] = session_label
+            if pipeline_name == 'hbcd_ecg_trial':
+                json_contents[ses_json_contents[pipeline_name]] = [session_label]
+            else:
+                json_contents[ses_json_contents[pipeline_name]] = session_label
             
     return json_contents
 
 
-def construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = None):
+def construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = None, status = None):
     """Constructs dictionaries needed to launch CBRAIN task
     
     Parameters
@@ -802,7 +814,12 @@ def construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id,
     task_params = (
         ('cbrain_api_token', cbrain_api_token),
     )
-
+    print("Launching CBRAIN task with the following parameters:")
+    print("Group ID: {}".format(group_id))
+    print("User ID: {}".format(user_id))
+    print("Tool Config ID: {}".format(tool_config_id))
+    print("Data Provider ID: {}".format(data_provider_id))
+    print("Task Description: {}".format(task_description))
     task_data = { 
         'cbrain_task': {
             'group_id': group_id,
@@ -813,6 +830,9 @@ def construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id,
             'params': {}
         }
     }
+
+    if type(status) != type(None):
+        task_data['cbrain_task']['status'] = status
     
     task_data['cbrain_task']['params']['invoke'] = fixed_parameters_dict
     
@@ -956,12 +976,72 @@ def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api
                                       session_label = session_label)
         
     #Construct different dictionaries that will be sent to CBRAIN
-    task_headers, task_params, task_data = construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = all_to_keep)
+    print("task description: {}".format(task_description))
+    if pipeline_name == 'hbcd_ecg':
+        task_headers, task_params, task_data = construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = None, status = 'Standby')
+    else:      
+        task_headers, task_params, task_data = construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = all_to_keep)
         
     #Submit task to CBRAIN
     status, json_for_logging = submit_generic_cbrain_task(task_headers, task_params, task_data, pipeline_name)
     return status, json_for_logging
 
+def submit_subtasks_to_serializer(cbrain_api_token, group_id, user_id,tool_config_id ="13520", data_provider_id = 710, subtask_ids = []):
+    '''Submits a list of subtask ids to the serializer tool on CBRAIN
+    
+    Parameters
+    ----------
+    
+    cbrain_api_token : str
+        The API token for your current cbrain session (needs to be refreshed every day or
+        so from the CBRAIN website)
+    group_id : str
+        The CBRAIN permissions group associated with the current run
+    user_id : str
+        The CBRAIN user id associated with the current run
+    tool_config_id : str, default 13520 (for hbcd-pilot)
+        The numeric id of the tool on a particular system. For example 4331 represents a
+        specific version of QSIPREP on UMN/MSI's Mesabi system. By default this will be read
+        from the tool_config_ids file unless a different tool_config_id is specified.
+    data_provider_id : str
+        The data provider ID for the data provider you want to
+        store the results in
+    task_description : str, default ''
+        A description of the task that will be displayed on the CBRAIN website
+    subtask_ids : list of ints
+        A list of subtask ids that should be submitted to the serializer tool
+        
+    Returns
+    -------
+    
+    bool, True if CBRAIN accepts request
+    
+    '''
+    task_description = 'CBRAIN Serializer Task'
+    task_headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    task_params = (
+        ('cbrain_api_token', cbrain_api_token),
+    )
+
+    task_data = { 
+        'cbrain_task': {
+            'group_id': group_id,
+            'user_id' : user_id,
+            'tool_config_id': tool_config_id,
+            'results_data_provider_id': data_provider_id,
+            'description': task_description,
+            'params': {}
+        }
+    }
+
+    if type(subtask_ids) != list:
+        raise NameError('Error: subtask_ids should be a list of integers')
+    task_data['cbrain_task']['params']['ordered_subtask_ids'] = subtask_ids
+    status, json_for_logging = submit_generic_cbrain_task(task_headers, task_params, task_data, 'CbSerializer')
+    return status, json_for_logging
 
 def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
     '''Generates info on extended file list files
@@ -2395,6 +2475,7 @@ def update_processing(pipeline_name = None,
     final_subjects_names_for_proc = [] #list of subjects that fullfill requirements for processing
     metadata_dicts_list = [] #list for keeping track of s3 file identifiers
     subject_sessions_launched = 0
+    subtask_ids = [] #list of cbrain task ids for all launched tasks
     for i, temp_subject in enumerate(registered_and_s3_names):
         for j, temp_ses in enumerate(session_dps_dict.keys()):
 
@@ -2646,11 +2727,17 @@ def update_processing(pipeline_name = None,
                                             group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
                                             all_to_keep = all_to_keep_lists[-1], session_label = temp_ses_name.split('-')[1])
             #######################################################################
-            
             json_for_logging['s3_metadata'] = metadata_dicts_list[-1]
             if status == False:
                 raise ValueError('Error CBRAIN processing tasked was not submitted for {}. Issue must be resolved for processing to continue.'.format(final_subjects_names_for_proc[-1]))
             else:
+                ### extract the taskis of standby task to be submitted toCbSerializer
+                if pipeline_name == 'hbcd_ecg':
+                    # print('json for logging: {}'.format(json_for_logging))
+                    subtask_ids.append(
+                        json_for_logging['returned_by_cbrain'][0]['id']
+                    )
+                
                 if type(logs_directory) != type(None):
                     log_file_name = os.path.join(logs_directory, '{}_{}_UMNProcSubmission.json'.format(final_subjects_names_for_proc[-1], pipeline_name))
                     with open(log_file_name, 'w') as f:
@@ -2662,7 +2749,24 @@ def update_processing(pipeline_name = None,
             if type(max_subject_sessions_to_proc) != type(None):
                 subject_sessions_launched += 1
             
-       
+    # Submit the subtask ids to the CBRAIN serializer for the hbcd_ecg pipeline
+    if pipeline_name == 'hbcd_ecg':
+        if subtask_ids != []:
+            print('Submitting {} subtask ids to the CBRAIN serializer for the hbcd_ecg pipeline'.format(len(subtask_ids)))
+            print('Subtask ids: {}'.format(subtask_ids))
+            try:
+                status, json_for_logging = submit_subtasks_to_serializer(cbrain_api_token, group_id, user_id, tool_config_id ="13520", data_provider_id = session_dps_dict[temp_ses]['id'], subtask_ids = subtask_ids)
+            except:
+                print('Error encountered while trying to submit job for processing. This is likely a networking issue. Will try again in 5 seconds.')
+                time.sleep(5) #wait 5 seconds and try again
+                status, json_for_logging = submit_subtasks_to_serializer(cbrain_api_token, group_id, user_id, tool_config_id ="13520", data_provider_id = session_dps_dict[temp_ses]['id'], subtask_ids = subtask_ids)
+            if status == False:
+                raise ValueError('Error CBRAIN processing tasked was not submitted for {}. Issue must be resolved for processing to continue.'.format(final_subjects_names_for_proc[-1]))
+            else: 
+                print('Successfully submitted {} subtask ids to the CBRAIN serializer for the hbcd_ecg pipeline'.format(len(subtask_ids)))
+                print('Json for logging: {}'.format(json_for_logging))
+        else:
+            print('No subtask ids to submit to the CBRAIN serializer for the hbcd_ecg pipeline')
     #################################################################################################
     #################################################################################################
     #Iterate through all subjects who were deemed ready for processing,
