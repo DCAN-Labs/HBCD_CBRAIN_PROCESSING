@@ -301,30 +301,52 @@ def grab_cbrain_initialization_details(cbrain_api_token, group_name, bids_data_p
     return group_id, bids_bucket, bids_dp_id, session_dps_dict
 
 
-def find_cbrain_entities(cbrain_api_token, entity_type):
+def find_cbrain_entities(cbrain_api_token, entity_type, data_provider_ids=None):
 
     base_url = 'https://portal.cbrain.mcgill.ca'
-    tasks = []
-    tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
+    entities = []
+    page = 1
+    per_page = 999
+
+    # Normalize single ints into lists so callers can pass either
+    if data_provider_ids is not None and not isinstance(data_provider_ids, (list, tuple)):
+        data_provider_ids = [data_provider_ids]
 
     while True:
-        tasks_response = requests.get(
-            url = '/'.join([base_url, entity_type]),
-            data = tasks_request,
-            headers = {'Accept': 'application/json'}
+
+        entities_request = {
+            'cbrain_api_token': cbrain_api_token,
+            'page': page,
+            'per_page': per_page,
+        }
+
+        if data_provider_ids is not None:
+            print("data provider ids:", data_provider_ids)
+            entities_request['data_provider_id[]'] = [int(d) for d in data_provider_ids]
+            entities_request['_simple_filters'] = 1
+
+        print("request:")
+        print(entities_request)
+
+        entities_response = requests.get(
+            url='/'.join([base_url, entity_type]),
+            params=entities_request,
+            headers={'Accept': 'application/json'}
         )
-        if tasks_response.status_code != requests.codes.ok:
-            print('User tasks request failed.')
-            print(tasks_response)
+
+        if entities_response.status_code != requests.codes.ok:
+            print('User entities request failed.')
+            print(entities_response)
             break
-        # Collect the responses on this page then increment
-        tasks += tasks_response.json()
-        tasks_request['page'] += 1
-        # Stop requesting responses when we're at the last page
-        if len(tasks_response.json()) < tasks_request['per_page']:
-            break 
-            
-    return tasks
+
+        page_entities = entities_response.json()
+        entities += page_entities
+        page += 1
+
+        if len(page_entities) < per_page:
+            break
+
+    return entities
 
 def grab_subject_file_info(subject_id, bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assembly_bids'):
     '''Utility that grabs BIDS data for a given subject
@@ -1043,7 +1065,7 @@ def submit_subtasks_to_serializer(cbrain_api_token, group_id, user_id,tool_confi
     status, json_for_logging = submit_generic_cbrain_task(task_headers, task_params, task_data, 'CbSerializer')
     return status, json_for_logging
 
-def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
+def find_current_cbrain_tasks(cbrain_api_token,tool_config_id=None, data_provider_id = None):
     '''Generates info on extended file list files
     
     Parameters
@@ -1062,7 +1084,10 @@ def find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None):
     base_url = 'https://portal.cbrain.mcgill.ca'
     tasks = []
     tasks_request = {'cbrain_api_token': cbrain_api_token, 'page': 1, 'per_page': 999}
-
+    if tool_config_id is not None:
+        tasks_request['_simple_filters'] = 1
+        tasks_request['tool_config_id'] = int(tool_config_id)
+    
     while True:
         tasks_response = requests.get(
             url = '/'.join([base_url, 'tasks']),
@@ -2437,14 +2462,32 @@ def update_processing(pipeline_name = None,
     ###################################################################################
         
     #Grab CBRAIN Tasks that will later be referenced, and seperate them by results data provider ########
-    current_cbrain_tasks = find_current_cbrain_tasks(cbrain_api_token, data_provider_id = None) #this is bids_data_provider_id because we currently only support processing that grabs/saves from one DP
+    current_cbrain_tasks = find_current_cbrain_tasks(cbrain_api_token,tool_config_id=tool_config_id, data_provider_id = None) #this is bids_data_provider_id because we currently only support processing that grabs/saves from one DP
+    if verbose:
+            print('The following is a list of all current CBRAIN tasks for the given tool config id:')
+            print(current_cbrain_tasks)
+            # save tasks to a json for later reference
+            with open(os.path.join(logs_directory, 'cbrain_tasks.json'), 'w') as f:
+                json.dump(current_cbrain_tasks, f, indent=4)
+
     cbrain_session_tasks = {}
     for temp_ses in session_dps_dict.keys():
         temp_dp_id = session_dps_dict[temp_ses]['id']
         cbrain_session_tasks[temp_ses] = list(filter(lambda f: temp_dp_id == f['results_data_provider_id'], current_cbrain_tasks))
 
     #Grab CBRAIN Files that will later be referenced ##################################################
-    cbrain_files = find_cbrain_entities(cbrain_api_token, 'userfiles')
+    data_provider_ids = [bids_data_provider_id] + [
+            session_dps_dict[temp_ses]['id'] for temp_ses in session_dps_dict.keys()
+        ]
+    cbrain_files = find_cbrain_entities(cbrain_api_token, 'userfiles',data_provider_ids=data_provider_ids)
+    if verbose:
+            print('The following is a list of all data provider ids that will be used to find files in CBRAIN:')
+            print(data_provider_ids)
+            print('The following is a list of all files found under the BIDS and Derivatives DataProviders:')
+            print(cbrain_files)
+            #save this list of files to a json for later reference
+            with open(os.path.join(logs_directory, 'cbrain_files.json'), 'w') as f:
+                json.dump(cbrain_files, f, indent=4)
     bids_data_provider_files = list(filter(lambda f: bids_data_provider_id == f['data_provider_id'], cbrain_files))
     cbrain_deriv_files = {}
     print('The following derivative data providers will be used to see if processing is needed + to house the outputs of jobs launched later in the script:')
