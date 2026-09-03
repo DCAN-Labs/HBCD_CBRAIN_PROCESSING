@@ -248,6 +248,7 @@ def find_cbrain_entities(cbrain_api_token, entity_type, data_provider_ids=None):
         if data_provider_ids is not None:
             print("data provider ids:", data_provider_ids)
             entities_request['data_provider_id[]'] = [int(d) for d in data_provider_ids]
+            entities_request['_simple_filters'] = 1
 
         print("request:")
         print(entities_request)
@@ -2384,8 +2385,8 @@ def update_processing(pipeline_name = None,
         print('The following is a list of all current CBRAIN tasks for the given tool config id:')
         print(current_cbrain_tasks)
         # save tasks to a json for later reference
-        with open(os.path.join(logs_directory, 'cbrain_tasks.json'), 'w') as f:
-            json.dump(current_cbrain_tasks, f, indent=4)
+    with open(os.path.join(logs_directory, 'cbrain_tasks.json'), 'w') as f:
+        json.dump(current_cbrain_tasks, f, indent=4)
     
     cbrain_session_tasks = {}
     for temp_ses in session_dps_dict.keys():
@@ -2403,8 +2404,8 @@ def update_processing(pipeline_name = None,
         print('The following is a list of all files found under the BIDS and Derivatives DataProviders:')
         print(cbrain_files)
         #save this list of files to a json for later reference
-        with open(os.path.join(logs_directory, 'cbrain_files.json'), 'w') as f:
-            json.dump(cbrain_files, f, indent=4)
+    with open(os.path.join(logs_directory, 'cbrain_files.json'), 'w') as f:
+        json.dump(cbrain_files, f, indent=4)
     bids_data_provider_files = list(filter(lambda f: bids_data_provider_id == f['data_provider_id'], cbrain_files))
     cbrain_deriv_files = {}
     print('The following derivative data providers will be used to see if processing is needed + to house the outputs of jobs launched later in the script:')
