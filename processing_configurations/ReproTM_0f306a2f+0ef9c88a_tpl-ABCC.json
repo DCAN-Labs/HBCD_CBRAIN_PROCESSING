@@ -1,0 +1,17 @@
+{
+    "output_dir": "output",
+    "derivatives_prefix": "",
+    "output_dir": "output",
+    "derivatives_prefix": "",
+    "xcpd_ver": "0f306a2f+0ef9c88a",
+    "minutes": 10,
+    "fd_threshold": 0.2,
+    "smoothing_kernel": 2.25,
+    "tr": 1.725,
+    "minsize": 30,
+    "template_outfile_name": "template-ABCC-a3-9to16",
+    "support_dir": "/mnt/support",
+    "refine_scan_minthreshold": 3,
+    "refine_scan":true,
+    "run_spatial_interpolation": true
+}

@@ -91,7 +91,7 @@ def find_cbrain_subjects(cbrain_api_token, data_provider_id = 710): #For the rea
 
 
 def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config, bids_bucket = 'hbcd-pilot',
-                                           bids_prefix = 'assembly_bids'):
+                                           bids_prefix = 'assembly_bids', filter_csv_path=None, filter_mode='include'):
     """Find subjects that may be ready for processing
     
     Looks for subjects that are already registered in CBRAIN
@@ -122,7 +122,10 @@ def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_buc
     """
 
     #Find S3 Subjects
-    s3_subjects = find_s3_subjects(bids_bucket_config, bucket = bids_bucket, prefix = bids_prefix)
+    if filter_csv_path is None:
+        s3_subjects = find_s3_subjects(bids_bucket_config, bucket = bids_bucket, prefix = bids_prefix)
+    else:
+        s3_subjects = find_s3_subjects_filtered_on_csv(bids_bucket_config, filter_csv_path, bucket = bids_bucket, prefix = bids_prefix, filter_mode=filter_mode)
     s3_subjects.sort()
 
     #Narrow down BIDS DP Files to BidsSubject instances
@@ -139,6 +142,78 @@ def find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_buc
                 break
 
     return registered_and_s3_names, registered_and_s3_ids
+
+def find_s3_subjects_filtered_on_csv(bids_bucket_config, csv_path, bucket='hbcd-pilot',
+                                      prefix='assembly_bids', filter_mode='include'):
+    '''Utility to find BIDS subjects in S3 bucket that match (or don't match) a CSV candid list
+
+    Parameters
+    ----------
+    bids_bucket_config : str
+        Config file to identify S3 credentials
+    csv_path : str
+        Path to CSV file containing 'candid' column with subject identifiers
+    bucket : str, default 'hbcd-pilot'
+        Name of the bucket to query for subjects
+    prefix : str, default 'assembly_bids'
+        Prefix to restrict file search
+        (e.g., if data is at s3://hbcd-pilot/assembly_bids/sub-1,
+        then prefix='assembly_bids')
+    filter_mode : str, default 'include'
+        'include' - keep only S3 subjects whose candid exactly matches one in the CSV
+        'exclude' - keep only S3 subjects whose candid does NOT exactly match one in the CSV
+
+    Returns
+    -------
+    s3_subjects : list
+        List of subjects found in S3, filtered according to filter_mode.
+        Only includes folders matching 'sub-*' naming pattern.
+    '''
+
+    if filter_mode not in ('include', 'exclude'):
+        raise ValueError(f"filter_mode must be 'include' or 'exclude', got {filter_mode!r}")
+
+    # Read CSV and extract candid values
+    df = pd.read_csv(csv_path)
+
+    # Check if the 'release_candid' column exists
+    if 'release_candid' not in df.columns:
+        raise KeyError("Required column 'release_candid' not found in DataFrame")
+
+    csv_candids = set(df['release_candid'].astype(str).unique())
+
+
+    # Build the set of exact expected subject folder names, e.g. {'sub-123', 'sub-456', ...}
+    csv_subject_names = {
+        candid if candid.startswith('sub-') else f'sub-{candid}'
+        for candid in csv_candids
+    }
+    print(f"Subjects from CSV (exact matches): {csv_subject_names}")
+
+    # Create a PageIterator    
+    page_iterator = create_page_iterator(bucket = bucket, prefix = prefix, bucket_config = bids_bucket_config)
+    levels = count = prefix.rstrip("/").count("/") + 1
+    #Iterate through bucket to find potential subjects
+    potential_subjects = []
+    #potential_subjects_dates = []
+    for page in page_iterator:
+        if page.get('Contents', None):
+            for temp_dict in page['Contents']:
+                potential_subjects.append(temp_dict['Key'].split('/')[levels])
+                #potential_subjects_dates.append(temp_dict['LastModified'])
+
+    #Find unique files starting with "sub-*"
+    potential_subjects = list(set(potential_subjects))
+    print(f"Potential subjects found in S3: {potential_subjects}")
+
+    # Apply include/exclude filter using exact matching
+    if filter_mode == 'include':
+        s3_subjects = [sub for sub in potential_subjects if sub in csv_subject_names]
+    else:  # exclude
+        print(f"Excluding subjects found in CSV: {csv_subject_names}")
+        s3_subjects = [sub for sub in potential_subjects if sub not in csv_subject_names]
+
+    return sorted(s3_subjects)
 
 def find_s3_subjects(bids_bucket_config, bucket = 'hbcd-pilot', prefix = 'assembly_bids'):
     '''Utility to find BIDS subjects in S3 bucket
@@ -687,7 +762,7 @@ def file_exists_under_prefix(bucket_name, prefix, s3_config):
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix, MaxKeys=1)
     return 'Contents' in response
     
-def grab_json(json_config_location, pipeline_name, session_label = None):
+def grab_json(json_config_location, pipeline_name, subject_label = None, session_label = None):
     """Load json config for a given pipeline
 
     Parameters
@@ -701,6 +776,10 @@ def grab_json(json_config_location, pipeline_name, session_label = None):
     pipeline_name : str
         The name of the pipeline whose json config
         you want to load.
+    subject_label : str, default None
+        The label of the subject for which to process data.
+    session_label : str, default None
+        The label of the session for which to process data.
 
     Returns
     -------
@@ -729,6 +808,14 @@ def grab_json(json_config_location, pipeline_name, session_label = None):
             ses_json_contents = json.load(f)
         if pipeline_name in ses_json_contents.keys():
             json_contents[ses_json_contents[pipeline_name]] = session_label
+    
+    if type(subject_label) != type(None):
+        ses_config_location = os.path.join(Path(inspect.getfile(update_processing)).absolute().parent.resolve(), 'subject_arguments.json')
+        with open(ses_config_location, 'r') as f:
+            ses_json_contents = json.load(f)
+        if pipeline_name in ses_json_contents.keys():
+            print('Adding subject argument {} to pipeline {}'.format(subject_label, pipeline_name))
+            json_contents[ses_json_contents[pipeline_name]] = subject_label
             
     return json_contents
 
@@ -873,7 +960,7 @@ def submit_generic_cbrain_task(task_headers, task_params, task_data, pipeline_na
 def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api_token,
                              data_provider_id = 710, override_tool_config_id = False,
                              group_id = 10367, user_id = 4022, task_description = '',
-                             custom_json_config_location = False, all_to_keep = None,
+                             custom_json_config_location = False, all_to_keep = None, subject_label = None,
                              session_label = None):
 
     '''Uses submit_generic_cbrain_task to launch processing
@@ -925,7 +1012,9 @@ def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api
         some T1 file from the anat dir, it will remove other
         files from the anat dir, but will leave the func dir,
         or other session dirs untouched.
-        
+    subject_label : str, default None
+        The ID of the subject for which to process data
+
     Returns
     -------
     bool
@@ -941,6 +1030,7 @@ def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api
     #json_contents = grab_json(custom_json_config_location, pipeline_name)
     fixed_parameters_dict = grab_json(custom_json_config_location,
                                       pipeline_name,
+                                      subject_label = subject_label,
                                       session_label = session_label)
         
     #Construct different dictionaries that will be sent to CBRAIN
@@ -1983,19 +2073,23 @@ def check_all_files_old_enough(metadata_dict, minimum_file_age_days,
     age comparison through the file_patterns_to_ignore list.
     '''
     
+    file_patterns_to_ignore = ['sessions.tsv', 'scans.tsv']
     
     today = date.today()
+    # print('metadata_dict: {}'.format(metadata_dict))
     
     for temp_file in metadata_dict.keys():
         skip_file = False
         for temp_pattern in file_patterns_to_ignore:
             if metadata_dict[temp_file]['Key'].endswith(temp_pattern):
+                print('Skipping file {} because it matches the ignore pattern {}'.format(temp_file, temp_pattern))
                 skip_file = True
                 break
         
         if skip_file == False:
             file_upload_day = date.fromisoformat(metadata_dict[temp_file]['LastModified'].split('T')[0])
             day_difference = today - file_upload_day
+            print('{} Uploaded {} days ago'.format(temp_file.split('/')[-1], day_difference.days))
             if verbose:
                 print('{} Uploaded {} days ago'.format(temp_file.split('/')[-1], day_difference.days))
             if day_difference.days < minimum_file_age_days:
@@ -2165,7 +2259,8 @@ def update_processing(pipeline_name = None,
                         check_ancestor_pipelines = True,
                         verbose = False,
                         minimum_file_age_days = 14,
-                        max_subject_sessions_to_proc = None):
+                        max_subject_sessions_to_proc = None,
+                        filter_csv_path=None, filter_mode='include'):
     
     '''Function to manage processing of data using CBRAIN
     
@@ -2428,7 +2523,7 @@ def update_processing(pipeline_name = None,
     ###########
     
     registered_and_s3_names, registered_and_s3_ids = find_potential_subjects_for_processing_v2(bids_data_provider_files, bids_bucket_config,
-                                                       bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix)
+                                                           bids_bucket = bids_bucket, bids_prefix = bids_bucket_prefix, filter_csv_path=filter_csv_path, filter_mode=filter_mode)
     print('      Found {} BidsSubjects under DP\n'.format(len(registered_and_s3_names)))
     
     
@@ -2691,7 +2786,7 @@ def update_processing(pipeline_name = None,
                 #Launch Processing
                 status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
                                             group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
-                                            all_to_keep = all_to_keep_lists[-1], session_label = temp_ses_name.split('-')[1])
+                                            all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
             except:
                 print('Error encountered while trying to submit job for processing. This is likely a networking issue. Will try again in 5 seconds.')
                 time.sleep(5) #wait 5 seconds and try again
@@ -2701,7 +2796,7 @@ def update_processing(pipeline_name = None,
                 #Launch Processing
                 status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[i], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
                                             group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
-                                            all_to_keep = all_to_keep_lists[-1], session_label = temp_ses_name.split('-')[1])
+                                            all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
             #######################################################################
             
             json_for_logging['s3_metadata'] = metadata_dicts_list[-1]

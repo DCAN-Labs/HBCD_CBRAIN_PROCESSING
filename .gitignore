@@ -1,0 +1,6 @@
+/logs
+launch_processing*.py
+*session_processing_*trial.json
+test_filter_cbrian_request.py
+/__pycache__
+session_processing_ReproTM_trial.json
