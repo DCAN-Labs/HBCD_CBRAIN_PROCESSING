@@ -8,7 +8,11 @@
                                   "HBCD-Main-Anon-Derivatives-V03-V2",
                                   "HBCD-Main-Anon-Derivatives-V04-V2",
                                   "HBCD-Main-Anon-Derivatives-V06-V2"],
-   
+    "xcp_d-d902942d+7a4c379b" : ["HBCD-Main-Anon-Derivatives-V02-V2"],
+    "xcp_d-364caa63+7a4c379b" : ["HBCD-Main-Anon-Derivatives-V02-V2",
+                                 "HBCD-Main-Anon-Derivatives-V03-V2",
+                                 "HBCD-Main-Anon-Derivatives-V04-V2",
+                                 "HBCD-Main-Anon-Derivatives-V06-V2"],
     "osprey" : ["HBCD-Main-Anon-Derivatives-V02-V2",
                 "HBCD-Main-Anon-Derivatives-V03-V2",
                 "HBCD-Main-Anon-Derivatives-V04-V2",
