@@ -1,4 +1,8 @@
-{ 
+{
+    "bibsnet" : ["HBCD-Main-Anon-Derivatives-V02-V2",
+                "HBCD-Main-Anon-Derivatives-V03-V2",
+                "HBCD-Main-Anon-Derivatives-V04-V2",
+                "HBCD-Main-Anon-Derivatives-V06-V2"], 
     "nibabies-26.0.1-d902942d" : ["HBCD-Main-Anon-Derivatives-V02-V2"],
     "nibabies-26.0.1-364caa63" : ["HBCD-Main-Anon-Derivatives-V02-V2",
                                   "HBCD-Main-Anon-Derivatives-V03-V2",
