@@ -2073,7 +2073,7 @@ def check_all_files_old_enough(metadata_dict, minimum_file_age_days,
     age comparison through the file_patterns_to_ignore list.
     '''
     
-    file_patterns_to_ignore = ['sessions.tsv', 'scans.tsv']
+    # file_patterns_to_ignore = ['sessions.tsv', 'scans.tsv']
     
     today = date.today()
     # print('metadata_dict: {}'.format(metadata_dict))
@@ -2202,7 +2202,7 @@ def check_if_ancestor_file_selection_is_same(subject_id, session_files, ancestor
                               ending = 'UMNProcSubmission.json')
         
         if type(json_path) == type(None):
-            print('   Warning: no ancestor cbrain_misc was identified. Assuming subject should not be processed.')
+            print(f'   Warning: no ancestor cbrain_misc was identified for {temp_pipeline}. Assuming subject should not be processed.')
             return False
         else:
             with open(json_path, 'r') as f:
@@ -2227,6 +2227,9 @@ def check_if_ancestor_file_selection_is_same(subject_id, session_files, ancestor
                 for temp_file in original_s3_metadata.keys():
                     skip_file = False
                     for temp_agnostic in session_agnostic_files:
+                        # if temp_file.endswith(temp_agnostic) or temp_file.endswith('scans.tsv'):
+                        #     skip_file = True
+                        #     break #dont evaluate the size of session agnostic files
                         if temp_file.endswith(temp_agnostic):
                             skip_file = True
                             break #dont evaluate the size of session agnostic files
@@ -2782,21 +2785,31 @@ def update_processing(pipeline_name = None,
             try:
                 for temp_key in subject_external_requirements_list[-1].keys():
                     cbrain_mark_as_newer(subject_external_requirements_list[-1][temp_key], cbrain_api_token)                
-
-                #Launch Processing
-                status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
-                                            group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
-                                            all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
+                
+                if 'ReproTM' in pipeline_name:
+                    #Launch Processing
+                    status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
+                                                group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
+                                                all_to_keep = None, subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
+                else:
+                    status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
+                                                group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
+                                                all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
             except:
                 print('Error encountered while trying to submit job for processing. This is likely a networking issue. Will try again in 5 seconds.')
                 time.sleep(5) #wait 5 seconds and try again
                 for temp_key in subject_external_requirements_list[-1].keys():
                     cbrain_mark_as_newer(subject_external_requirements_list[-1][temp_key], cbrain_api_token)                
 
-                #Launch Processing
-                status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[i], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
-                                            group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
-                                            all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
+                if 'ReproTM' in pipeline_name:
+                    #Launch Processing
+                    status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
+                                                group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
+                                                all_to_keep = None, subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
+                else:
+                    status, json_for_logging = launch_task_concise_dict(pipeline_name, subject_external_requirements_list[-1], cbrain_api_token, data_provider_id = session_dps_dict[temp_ses]['id'],
+                                                group_id = group_id, user_id = user_id, task_description = '{} via API'.format(final_subjects_names_for_proc[-1]),
+                                                all_to_keep = all_to_keep_lists[-1], subject_label = temp_subject.split('-')[1] , session_label = temp_ses_name.split('-')[1])
             #######################################################################
             
             json_for_logging['s3_metadata'] = metadata_dicts_list[-1]

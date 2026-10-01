@@ -4,3 +4,4 @@ launch_processing*.py
 test_filter_cbrian_request.py
 /__pycache__
 session_processing_ReproTM_trial.json
+ses_proc_full.json

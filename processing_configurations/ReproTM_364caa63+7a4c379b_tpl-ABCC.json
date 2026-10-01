@@ -1,6 +1,6 @@
 {
     "output_dir": "output",
-    "xcpd_ver": "2afa9081+0ef9c88a",
+    "xcpd_ver": "364caa63+7a4c379b",
     "minutes": 10,
     "fd_threshold": 0.2,
     "smoothing_kernel": 2.25,

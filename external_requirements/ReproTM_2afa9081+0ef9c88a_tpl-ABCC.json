@@ -1,4 +1,3 @@
 {
-    "subject_dir" : "BidsSubject",
     "bids_dir" : {"type" : "XcpdOutput", "tag_names" : ["2afa9081+0ef9c88a"]}
 }
