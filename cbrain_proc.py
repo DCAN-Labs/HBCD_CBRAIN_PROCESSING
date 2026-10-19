@@ -1271,7 +1271,7 @@ def find_potential_subjects_for_processing(cbrain_api_token, bids_bucket_config,
 
     return registered_and_s3_names, registered_and_s3_ids, registered_and_s3_sizes
 
-def check_rerun_status(cbrain_subject_id, cbrain_tasks, derivatives_data_provider_id, tool_config_id, rerun_level = 1):
+def check_rerun_status(cbrain_subject_id, cbrain_subject_name, cbrain_tasks, derivatives_data_provider_id, tool_config_id, rerun_level = 1):
     '''Function that helps determine whether processing should be ran based on existing CBRAIN tasks.
     
     Parameters
@@ -1316,7 +1316,11 @@ def check_rerun_status(cbrain_subject_id, cbrain_tasks, derivatives_data_provide
         if temp_task['tool_config_id'] == int(tool_config_id):
             if temp_task['results_data_provider_id'] == int(derivatives_data_provider_id):
                 try:
-                    if cbrain_subject_id_str in temp_task['params']['interface_userfile_ids']:
+                    print("     cbrain_subject_id_str:", cbrain_subject_id_str)
+                    print("     cbrian_subject_name_str:", cbrain_subject_name)
+                    print("     temp_task['params']['interface_userfile_ids']:", temp_task['params']['interface_userfile_ids'])
+                    print("     temp_task['description']:", temp_task['description'])
+                    if (cbrain_subject_id_str in temp_task['params']['interface_userfile_ids']) or (cbrain_subject_name in temp_task['description']):
                         task_statuses.append(temp_task['status'])
                         task_ids.append(temp_task['id'])
                 except:
@@ -1337,6 +1341,7 @@ def check_rerun_status(cbrain_subject_id, cbrain_tasks, derivatives_data_provide
             example_status = temp_status
 
     if len(task_statuses) == 0:
+        print("     No Tasks Found")
         example_status = 'No Tasks Found'
         return True, example_status
     else:
@@ -2597,7 +2602,7 @@ def update_processing(pipeline_name = None,
             #Check what type of processing has already occured for the subject with
             #this pipeline and only continue if processing hasn't already been initiated
             #or under certain failure conditions (see documentation for check_rerun_status)
-            to_rerun, example_status = check_rerun_status(registered_and_s3_ids[i], cbrain_session_tasks[temp_ses], session_dps_dict[temp_ses]['id'], tool_config_id, rerun_level = rerun_level)
+            to_rerun, example_status = check_rerun_status(registered_and_s3_ids[i], registered_and_s3_names[i], cbrain_session_tasks[temp_ses], session_dps_dict[temp_ses]['id'], tool_config_id, rerun_level = rerun_level)
             subject_processing_details['CBRAIN_Status'] = example_status
             if False == to_rerun:
                 continue #Check rerun status will print out a message to the user if processing is not going to be rerun
