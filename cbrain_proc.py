@@ -204,7 +204,7 @@ def find_s3_subjects_filtered_on_csv(bids_bucket_config, csv_path, bucket='hbcd-
 
     #Find unique files starting with "sub-*"
     potential_subjects = list(set(potential_subjects))
-    print(f"Potential subjects found in S3: {potential_subjects}")
+    # print(f"Potential subjects found in S3: {potential_subjects}")
 
     # Apply include/exclude filter using exact matching
     if filter_mode == 'include':
@@ -1316,10 +1316,10 @@ def check_rerun_status(cbrain_subject_id, cbrain_subject_name, cbrain_tasks, der
         if temp_task['tool_config_id'] == int(tool_config_id):
             if temp_task['results_data_provider_id'] == int(derivatives_data_provider_id):
                 try:
-                    print("     cbrain_subject_id_str:", cbrain_subject_id_str)
-                    print("     cbrian_subject_name_str:", cbrain_subject_name)
-                    print("     temp_task['params']['interface_userfile_ids']:", temp_task['params']['interface_userfile_ids'])
-                    print("     temp_task['description']:", temp_task['description'])
+                    # print("     cbrain_subject_id_str:", cbrain_subject_id_str)
+                    # print("     cbrian_subject_name_str:", cbrain_subject_name)
+                    # print("     temp_task['params']['interface_userfile_ids']:", temp_task['params']['interface_userfile_ids'])
+                    # print("     temp_task['description']:", temp_task['description'])
                     if (cbrain_subject_id_str in temp_task['params']['interface_userfile_ids']) or (cbrain_subject_name in temp_task['description']):
                         task_statuses.append(temp_task['status'])
                         task_ids.append(temp_task['id'])
