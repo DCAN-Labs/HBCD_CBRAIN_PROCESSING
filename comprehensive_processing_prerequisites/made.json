@@ -1,6 +1,6 @@
 {
 
-    "eeg" : {"file_naming" : {"acq-eeg" : true,".set" : true}},
+    "eeg" : {"file_naming" : {"acq-eeg" : true}},
     "scans.tsv" : {"file_naming" : {"scans.tsv" : true}}
     
 }

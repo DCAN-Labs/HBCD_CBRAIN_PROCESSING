@@ -6,7 +6,7 @@ Each page includes descriptions of the processing arguments and lists of the inp
 
 These resources are intended as general references for users who wish to understand how HBCD processing is conducted.
 All pages shown below are automatically generated from the processing configuration
-files in the `HBCD_CBRAIN_PROCESSING repository <https://github.com/erikglee/HBCD_CBRAIN_PROCESSING>`_,
+files in the `HBCD_CBRAIN_PROCESSING repository <https://github.com/DCAN-Labs/HBCD_CBRAIN_PROCESSING>`_,
 and versions of the Boutiques descriptors in CBRAIN.
 For HBCD datasets processed within `CBRAIN <https://cbrain.ca/>`_, similar information is
 also (for the most part) automatically saved out to the subject level or session level derivatives folder.
