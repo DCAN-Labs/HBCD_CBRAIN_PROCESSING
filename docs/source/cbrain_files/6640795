@@ -1,0 +1,14 @@
+{
+    "Name": "NiBabies: Neuroimaging preprocessing workflows for babies",
+    "BIDSVersion": "1.4.0",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "NiBabies",
+            "Version": "26.0.1",
+            "CodeURL": "https://github.com/nipreps/nibabies/archive/26.0.1.tar.gz",
+            "ConfigurationHash": "d902942d"
+        }
+    ],
+    "HowToAcknowledge": "TODO"
+}
