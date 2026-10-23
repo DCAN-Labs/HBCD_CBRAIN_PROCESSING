@@ -22,6 +22,17 @@ the outputs provided to users in the HBCD release.
 
 .. image:: ./images/pipeline_workflow_release_2.0.svg
 
+Tools outside CBRAIN
+~~~~~~~~~~~~~~~~~~~~
+
+1. :doc:`ModelArrayIO <modelarrayio>`
+2. :doc:`Symir <symir>`
+
+.. toctree::
+   :hidden:
+
+   modelarrayio
+   symir
 
 Tool Names
 ~~~~~~~~~~
