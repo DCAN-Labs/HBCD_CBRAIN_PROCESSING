@@ -10,6 +10,6 @@ will update processing for a given pipeline in CBRAIN. By "update processing" we
 where all the BIDS data is stored will be queried to determine if any new processing should occur. This
 process happens independently for each pipeline being ran within CBRAIN.
 
-The current diagram is designed to describe the state of processing workflows as of October 21, 2025.
+The current diagram is designed to describe the state of processing workflows as of October 21, 2026.
 
 .. image:: ./images/CBRAIN_Proc_Workflow.drawio.svg

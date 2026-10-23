@@ -17,7 +17,7 @@ This documentation base is an overview of the tools and
 processing steps used in the HBCD study. At a high level,
 HBCD processing involves the following details:
 
-1. **BIDS Curation**: MRI, EEG, and Biosensors data from HBCD
+1. **BIDS Curation**: MRI, EEG, ECG, and Biosensors data from HBCD
    is curated in BIDS format by LORIS, and made available in
    an S3 bucket.
 2. **Pipeline Organization**: Pipelines that are used for HBCD
