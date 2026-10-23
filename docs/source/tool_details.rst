@@ -20,7 +20,7 @@ Processing workflow
 The following diagram highlights how the different processing tools are used together to generate
 the outputs provided to users in the HBCD release.
 
-.. image:: ./images/pipeline_workflow_release_2.0.svg
+.. image:: ./images/Pipeline_Workflow_3.0.drawio.svg
 
 Tools outside CBRAIN
 ~~~~~~~~~~~~~~~~~~~~
