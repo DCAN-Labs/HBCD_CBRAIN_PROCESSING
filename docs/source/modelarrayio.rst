@@ -163,6 +163,7 @@ Outputs
            ├── xcp_d-{HASH}_task-rest_seg-{ATLAS}_param-pearsoncorrelation.h5
            └── xcp_d-{HASH}_task-rest_seg-{ATLAS}_param-pearsoncorrelation.csv
 
-``HASH`` is ``d902942d+7a4c379b`` or ``364caa63+7a4c379b``. ``ATLAS`` can be
+``HASH`` is ``d902942d+7a4c379b`` or ``364caa63+7a4c379b``. 
+``ATLAS`` can be
 ``4S-{156|256|...|1056}Parcels``, ``Glasser``, ``Gordon``, ``MIDB``, or
 ``MyersLabonte``.

@@ -26,13 +26,13 @@ Tools outside CBRAIN
 ~~~~~~~~~~~~~~~~~~~~
 
 1. :doc:`ModelArrayIO <modelarrayio>`
-2. :doc:`Symir <symir>`
+2. :doc:`Symri <symri>`
 
 .. toctree::
    :hidden:
 
    modelarrayio
-   symir
+   symri
 
-Tool Names
+Tool in CBRAIN
 ~~~~~~~~~~
