@@ -171,112 +171,224 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
         f.write("   {}\n\n".format(json_data['command-line']))
         
         comp_proc_recs_dir = '../../comprehensive_processing_prerequisites'
+
         requirements_files = []
+        older_requirements_files = []
+
         for filename in os.listdir(comp_proc_recs_dir):
-            # Use regular expression to match pipeline name with or without underscore and number
-            match = re.match(rf"^{tool_name}(?:_[0-9]+)?\.json$", filename)
+            # Match standard requirements files
+            match = re.match(rf"^{re.escape(tool_name)}(?:_[0-9]+)?\.json$", filename)
+
             if match:
                 requirements_files.append(os.path.join(comp_proc_recs_dir, filename))
+                continue
+
+            # Match older requirements files
+            older_match = re.match(
+                rf"^{re.escape(tool_name)}-older(?:_[0-9]+)?\.json$",
+                filename
+            )
+
+            if older_match:
+                older_requirements_files.append(
+                    os.path.join(comp_proc_recs_dir, filename)
+                )
+
         requirements_files.sort()
-        if len(requirements_files) > 0:
+        older_requirements_files.sort()
+
+        if requirements_files or older_requirements_files:
             is_qc_used = False
-            f.write("File Selection For Processing\n")
-            f.write("*****************************\n\n")
-            #f.write("The data for one imaging session (i.e. sub-1, ses-V02) must\n")
-            #f.write("satisfy at least one of the following requirements for processing.\n")
-            #f.write("Processing can occur if at least one requirement is satisfied.\n")
-            #f.write("If processing can occur, then any files that match any requirements \n")
-            #f.write("will be considered for processing. If only one table is seen below,\n")
-            #f.write("this means the pipeline only has one set of possible requirements.\n\n")
-
-            f.write("The first step of selecting a candidate for processing is determining whether\n")
-            f.write("the right files are present. In HBCD processing, pipelines are always run on\n")
-            f.write("one session worth of data at a time. With that in mind, we (mostly) query the\n")
-            f.write("contents of a subject's session folder to determine if processing should occur\n")
-            f.write("and also which files should be included in processing. For every pipeline there will be\n")
-            f.write("at least one requirement group that determines what files are needed for processing to occur. Within\n")
-            f.write("a requirement group, there may be criteria that address multiple file (or modality) types, which are known as 'File Groups'.\n")
-            f.write("For processing to occur, the minumum number of files surviving all Included/Excluded\n")
-            f.write("terms for a given 'File Group' must be satisfied.\n\n")
-            f.write("To allow for more flexible selection of\n")
-            f.write("files for processing, there are often multiple 'Requirement Groups'. The contents of each 'File Group'\n")
-            f.write("across 'Requirement Groups' must be the same, but which 'File Groups' are defined can be different.\n")
-            f.write("If multiple 'Requirement Groups' are present for the current pipeline, there will be multiple tables\n")
-            f.write("in this section. Only one 'Requirement Group' needs to be satisfied for processing to occur. If one\n")
-            f.write("requirement group is satisfied, then files from all 'File Groups' will be included in processing.\n\n")
-
-            f.write("Beyond the files that are chosen from this procedure, other associated files\n")
-            f.write("defined via the table :doc:`here <../associated_files>` will also\n")
-            f.write("be included in processing.\n\n")
 
             qc_criteria_dict = {}
-            for filename in requirements_files:
-                with open(filename, 'r') as f2:
-                    temp_processing_reqs = json.load(f2)
-                requirement_name = 'Requirement Group: ' + os.path.basename(filename).replace('.json', '')
-                f.write(f"{requirement_name}\n")
-                f.write(f"{'~'*len(os.path.basename(filename))}\n\n")
-                f.write(".. list-table::\n")
-                f.write("   :header-rows: 1\n\n")
-                f.write("   * - File Group\n")
-                f.write("     - How Many To Keep\n")
-                f.write("     - Term\n")
-                f.write("     - Included (True)/Excluded (False)\n")
-                for temp_key in temp_processing_reqs.keys():
-                    file_naming_dict = temp_processing_reqs[temp_key]['file_naming']
-                    if 'qc_criteria' in temp_processing_reqs[temp_key].keys():
-                        is_qc_used = True
-                        qc_criteria_dict[temp_key] = temp_processing_reqs[temp_key]
-                    for i, temp_inner_key in enumerate(file_naming_dict.keys()):
-                        if i == 0:
-                            f.write(f"   * - {escape_rst_special_chars(temp_key)}\n")
-                            if "num_to_keep" in temp_processing_reqs[temp_key].keys():
-                                f.write(f"     - {temp_processing_reqs[temp_key]['num_to_keep']}\n")
+
+            def write_requirement_tables(files, f, qc_criteria_dict):
+                for filename in files:
+                    with open(filename, 'r') as f2:
+                        temp_processing_reqs = json.load(f2)
+
+                    requirement_name = (
+                        'Requirement Group: ' +
+                        os.path.basename(filename).replace('.json', '')
+                    )
+
+                    f.write(f"{requirement_name}\n")
+                    f.write(f"{'~' * len(os.path.basename(filename))}\n\n")
+
+                    f.write(".. list-table::\n")
+                    f.write("   :header-rows: 1\n\n")
+
+                    f.write("   * - File Group\n")
+                    f.write("     - How Many To Keep\n")
+                    f.write("     - Term\n")
+                    f.write("     - Included (True)/Excluded (False)\n")
+
+                    for temp_key in temp_processing_reqs.keys():
+                        file_naming_dict = temp_processing_reqs[temp_key]['file_naming']
+
+                        if 'qc_criteria' in temp_processing_reqs[temp_key].keys():
+                            qc_criteria_dict[temp_key] = temp_processing_reqs[temp_key]
+
+                        for i, temp_inner_key in enumerate(file_naming_dict.keys()):
+                            if i == 0:
+                                f.write(f"   * - {escape_rst_special_chars(temp_key)}\n")
+
+                                if "num_to_keep" in temp_processing_reqs[temp_key].keys():
+                                    f.write(
+                                        f"     - {temp_processing_reqs[temp_key]['num_to_keep']}\n"
+                                    )
+                                else:
+                                    f.write("     - All\n")
                             else:
-                                f.write(f"     - All\n")
-                        else:
-                            f.write(f"   * -   \n")
-                            f.write(f"     -   \n")
-                        f.write(f"     - {escape_rst_special_chars(temp_inner_key)}\n")
-                        f.write(f"     - {escape_rst_special_chars(file_naming_dict[temp_inner_key])}\n")
+                                f.write("   * -   \n")
+                                f.write("     -   \n")
 
+                            f.write(
+                                f"     - {escape_rst_special_chars(temp_inner_key)}\n"
+                            )
+                            f.write(
+                                f"     - {escape_rst_special_chars(file_naming_dict[temp_inner_key])}\n"
+                            )
 
+                    f.write("\n\n")
 
-                f.write("\n\n")
-            if is_qc_used:
+            # --------------------------------------------------
+            # Standard file selection requirements
+            # --------------------------------------------------
+
+            if requirements_files:
+                f.write("File Selection For Processing\n")
+                f.write("*****************************\n\n")
+
+                f.write(
+                    "The first step of selecting a candidate for processing is determining whether\n"
+                )
+                f.write(
+                    "the right files are present. In HBCD processing, pipelines are always run on\n"
+                )
+                f.write(
+                    "one session worth of data at a time. With that in mind, we (mostly) query the\n"
+                )
+                f.write(
+                    "contents of a subject's session folder to determine if processing should occur\n"
+                )
+                f.write(
+                    "and also which files should be included in processing. For every pipeline there will be\n"
+                )
+                f.write(
+                    "at least one requirement group that determines what files are needed for processing to occur. Within\n"
+                )
+                f.write(
+                    "a requirement group, there may be criteria that address multiple file (or modality) types, which are known as 'File Groups'.\n"
+                )
+                f.write(
+                    "For processing to occur, the minimum number of files surviving all Included/Excluded\n"
+                )
+                f.write(
+                    "terms for a given 'File Group' must be satisfied.\n\n"
+                )
+                f.write(
+                    "To allow for more flexible selection of files for processing, there are often multiple 'Requirement Groups'. "
+                    "The contents of each 'File Group' across 'Requirement Groups' must be the same, but which 'File Groups' are defined can be different. "
+                    "Only one 'Requirement Group' needs to be satisfied for processing to occur. If one requirement group is satisfied, "
+                    "then files from all 'File Groups' will be included in processing.\n\n"
+                )
+
+                f.write(
+                    "Beyond the files that are chosen from this procedure, other associated files\n"
+                )
+                f.write(
+                    "defined via the table :doc:`here <../associated_files>` will also\n"
+                )
+                f.write("be included in processing.\n\n")
+
+                write_requirement_tables(
+                    requirements_files, f, qc_criteria_dict
+                )
+
+            # --------------------------------------------------
+            # Older file selection requirements (V04 onwards)
+            # --------------------------------------------------
+
+            if older_requirements_files:
+                f.write("File Selection For Processing (V04 Onwards)\n")
+                f.write("********************************************\n\n")
+
+                f.write(
+                    "The following file selection requirements are specifically used for processing "
+                    "sessions from visit V04 onwards. These requirements are defined separately "
+                    "from the standard file selection requirements above because the files available "
+                    "and/or the selection criteria may differ for V04 and later visits.\n\n"
+                )
+
+                f.write(
+                    "Only the requirement groups listed in this section apply to V04 onwards. "
+                    "The standard file selection requirements above apply to visits before V04.\n\n"
+                )
+
+                write_requirement_tables(
+                    older_requirements_files, f, qc_criteria_dict
+                )
+
+            # --------------------------------------------------
+            # Quality control selection information
+            # --------------------------------------------------
+
+            if qc_criteria_dict:
                 f.write("Quality Control Selection Information\n")
                 f.write("**************************************\n\n")
-                f.write("The previous section of this page highlighted how to look at a file's name to determine\n")
-                f.write("whether it may belong to a specific 'File Group' (such as T2w images) that are needed\n")
-                f.write("for processing. Beyond this, it is often necessary\n")
-                f.write("to look at some QC criteria to determine whether a file should be included in processing. This section\n")
-                f.write("defines the QC criteria that is used to evaluate specific images. These QC criteria always operate\n")
-                f.write("on one file group at a time. If a file group uses QC criteria to select images, at least one table will be\n")
-                f.write("displayed below. Depending on the context, these criteria will be used to exclude certain images from processing,\n")
-                f.write("to find the best available image(s) within a specific category, or to exclude a session from processing.\n")
-                f.write("If sorting is the goal, the first row will be considered the most important criteria. In certain cases, not all\n")
-                f.write("images will have ratings for a specific QC field. In this case, a backup table (which will be displayed after\n")
-                f.write("the first table if available), will be used for that file group.\n\n")
+
+                f.write(
+                    "The previous sections highlighted how to look at a file's name to determine\n"
+                    "whether it may belong to a specific 'File Group' (such as T2w images) that are needed\n"
+                    "for processing. Beyond this, it is often necessary\n"
+                    "to look at some QC criteria to determine whether a file should be included in processing. This section\n"
+                    "defines the QC criteria that is used to evaluate specific images. These QC criteria always operate\n"
+                    "on one file group at a time. If a file group uses QC criteria to select images, at least one table will be\n"
+                    "displayed below. Depending on the context, these criteria will be used to exclude certain images from processing,\n"
+                    "to find the best available image(s) within a specific category, or to exclude a session from processing.\n"
+                    "If sorting is the goal, the first row will be considered the most important criteria. In certain cases, not all\n"
+                    "images will have ratings for a specific QC field. In this case, a backup table (which will be displayed after\n"
+                    "the first table if available), will be used for that file group.\n\n"
+                )
+
                 for temp_key in qc_criteria_dict.keys():
                     if 'qc_criteria' in qc_criteria_dict[temp_key].keys():
                         f.write(f"File Group: {temp_key}\n")
-                        f.write(f"{'~'*(len(temp_key) + 12)}\n\n")
+                        f.write(f"{'~' * (len(temp_key) + 12)}\n\n")
+
                         if "num_to_keep" in qc_criteria_dict[temp_key].keys():
-                            f.write("Processing will look for best {} file(s) to keep using the following criteria(s).\n\n".format(qc_criteria_dict[temp_key]["num_to_keep"]))
+                            f.write(
+                                "Processing will look for best {} file(s) to keep using the following criteria(s).\n\n".format(
+                                    qc_criteria_dict[temp_key]["num_to_keep"]
+                                )
+                            )
                         else:
-                            f.write("Processing will include all files passing the following criteria.\n\n")
+                            f.write(
+                                "Processing will include all files passing the following criteria.\n\n"
+                            )
+
                         outer_qc_list = qc_criteria_dict[temp_key]['qc_criteria']
+
                         for j, inner_qc_list in enumerate(outer_qc_list):
                             f.write(".. list-table::\n")
                             f.write("   :header-rows: 1\n\n")
                             f.write("   * - scans.tsv Field\n")
                             f.write("     - Operator\n")
                             f.write("     - Value\n")
+
                             for temp_qc in inner_qc_list:
                                 key = next(iter(temp_qc))
-                                f.write(f"   * - {escape_rst_special_chars(key)}\n")
-                                f.write(f"     - {escape_rst_special_chars(temp_qc[key][1])}\n")
-                                f.write(f"     - {escape_rst_special_chars(temp_qc[key][0])}\n")
+                                f.write(
+                                    f"   * - {escape_rst_special_chars(key)}\n"
+                                )
+                                f.write(
+                                    f"     - {escape_rst_special_chars(temp_qc[key][1])}\n"
+                                )
+                                f.write(
+                                    f"     - {escape_rst_special_chars(temp_qc[key][0])}\n"
+                                )
+
                             f.write("\n\n\n")
 
         #f.write(".. toctree::\n")
