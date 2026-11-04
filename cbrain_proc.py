@@ -752,7 +752,9 @@ def cbrain_mark_as_newer(file_id, cbrain_api_token):
 def file_exists_under_prefix(bucket_name, prefix, s3_config):
     pipeline_map = {
         'nibabies_25.2.0-0f306a2f' : 'nibabies-25.2.0-0f306a2f',
-        'nibabies_25.2.0-2afa9081' : 'nibabies-25.2.0-2afa9081'
+        'nibabies_25.2.0-2afa9081' : 'nibabies-25.2.0-2afa9081',
+        'nibabies-26.0.1-364caa63-older' : 'nibabies-26.0.1-364caa63',
+        'xcp_d-364caa63+7a4c379b-older' : 'xcp_d-364caa63+7a4c379b'
     }
     matched_key = next((k for k in pipeline_map if k in prefix), None)
     if matched_key:
@@ -1032,6 +1034,18 @@ def launch_task_concise_dict(pipeline_name, variable_parameters_dict, cbrain_api
                                       pipeline_name,
                                       subject_label = subject_label,
                                       session_label = session_label)
+
+    # If no func/ files are in all_to_keep (anatomical-only data),
+    # add the anat-only flag to the nibabies processing
+    if 'nibabies' in pipeline_name:
+        has_func = any("func" in Path(f).parts for f in all_to_keep)
+        if len(all_to_keep) > 0 and not has_func:
+            print("all_to_keep contains no func/ data for nibabies:", all_to_keep)
+            # add anat-only flag to fixed_parameters_dict
+            fixed_parameters_dict["anat_only"] = "true"
+            print("fixed_parameters_dict:", fixed_parameters_dict)
+            # exit(0)
+
         
     #Construct different dictionaries that will be sent to CBRAIN
     task_headers, task_params, task_data = construct_generic_cbrain_task_info_dict(cbrain_api_token, group_id, user_id, tool_config_id, data_provider_id, task_description, variable_parameters_dict, fixed_parameters_dict, all_to_keep = all_to_keep)
