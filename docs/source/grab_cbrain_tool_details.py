@@ -61,6 +61,9 @@ def generate_rst(json_data, tool_config_id, tool_name, url, ancestor_pipelines_d
         f.write('The "Argument IDs" field corresponds to input "id"s within the tool Boutiques Descriptor. "Value"s correspond\n')
         f.write('to either specific configuration files (if there is a numeric value), or otherwise broader file types\n')
         f.write('within CBRAIN (if the entry is text-based).\n\n')
+        if tool_name.startswith('nibabies'):
+            f.write(".. note::\n\n")
+            f.write("   If only anatomical data are available, only the anatomical pipeline is run using the ``--anat-only`` flag.\n\n")
         f.write(".. list-table::\n")
         f.write("   :header-rows: 1\n\n")
         f.write("   * - Argument ID\n")
